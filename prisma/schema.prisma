@@ -1,0 +1,139 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String    @id @default(cuid())
+  password String
+  active   Boolean   @default(true)
+  role     Role      @relation(fields: [roleId], references: [id])
+  roleId   Int
+  student  Student[]
+  cafe     Cafe[]
+  profile  Profile[]
+  admin    Admin[]
+}
+
+model Role {
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(15)
+  user User[]
+}
+
+model Profile {
+  id      String  @id @default(cuid())
+  name    String?
+  phoneNo String? @unique @db.VarChar(12)
+  address String? @db.Text
+  user    User    @relation(fields: [userId], references: [id])
+  userId  String
+}
+
+model Admin {
+  email  String  @id @db.VarChar(255)
+  user   User    @relation(fields: [userId], references: [id])
+  userId String
+  claim  Claim[]
+}
+
+model Student {
+  matricNo      String          @id @db.VarChar(6)
+  icNo          String          @unique @db.VarChar(12)
+  b40           Boolean         @default(false)
+  user          User            @relation(fields: [userId], references: [id])
+  userId        String
+  coupon        Coupon?
+  transaction   Transaction[]
+  CouponHistory CouponHistory[]
+}
+
+model Cafe {
+  id          String        @id @db.VarChar(12)
+  name        String
+  accountNo   String
+  user        User          @relation(fields: [userId], references: [id])
+  userId      String
+  sale        Sale?
+  transaction Transaction[]
+  SaleHistory SaleHistory[]
+}
+
+model Coupon {
+  id       String  @id @default(cuid())
+  student  Student @relation(fields: [matricNo], references: [matricNo])
+  matricNo String  @unique @db.VarChar(6)
+  total    Decimal @default(0.00) @db.Money
+}
+
+model CouponHistory {
+  id        String   @id @default(cuid())
+  student   Student  @relation(fields: [matricNo], references: [matricNo])
+  matricNo  String   @db.VarChar(6)
+  updatedAt DateTime @default(now())
+}
+
+model Sale {
+  id     String  @id @default(cuid())
+  cafe   Cafe    @relation(fields: [cafeId], references: [id])
+  cafeId String  @unique @db.VarChar(12)
+  total  Decimal @default(0.00) @db.Money
+}
+
+model SaleHistory {
+  id        String   @id @default(cuid())
+  cafe      Cafe     @relation(fields: [cafeId], references: [id])
+  cafeId    String   @unique @db.VarChar(12)
+  claimedAt DateTime @default(now())
+}
+
+model Transaction {
+  id                String    @id @default(cuid())
+  cafe              Cafe      @relation(fields: [cafeId], references: [id])
+  cafeId            String    @db.VarChar(12)
+  student           Student   @relation(fields: [matricNo], references: [matricNo])
+  matricNo          String    @db.VarChar(6)
+  amount            Decimal   @db.Money
+  createdAt         DateTime  @default(now())
+  claim             Claim[]
+  walletTransaction TWallet[]
+  pointTransaction  TPoint[]
+}
+
+model Claim {
+  id            String      @id @default(cuid())
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  transactionId String
+  claimed       Boolean     @default(false)
+  claimedAt     DateTime    @default(now())
+  admin         Admin       @relation(fields: [markedBy], references: [email])
+  markedBy      String      @db.VarChar(255)
+}
+
+model TWallet {
+  id            String      @id @default(cuid())
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  transactionId String
+  approved      Boolean     @default(false)
+}
+
+model TPoint {
+  id            String      @id @default(cuid())
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  transactionId String
+  point         Point       @relation(fields: [pointId], references: [id])
+  pointId       Int
+}
+
+model Point {
+  id               Int      @id @default(autoincrement())
+  name             String   @db.VarChar(20)
+  pointTransaction TPoint[]
+}
