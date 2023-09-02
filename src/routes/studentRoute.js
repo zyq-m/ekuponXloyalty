@@ -9,7 +9,7 @@ const {
   collectPoint,
 } = require("../controllers/studentController");
 // Require middleware
-const { checkBalance } = require("../middlewares/checklBalance");
+const { checkBalance } = require("../middlewares/checkBalance");
 
 const router = express.Router();
 // Student routes
