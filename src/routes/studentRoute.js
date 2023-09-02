@@ -1,6 +1,6 @@
 const express = require("express");
 
-// Require models
+// Require controllers
 const {
   getStudent,
   newStudent,
@@ -8,6 +8,8 @@ const {
   makePayment,
   collectPoint,
 } = require("../controllers/studentController");
+// Require middleware
+const { checkBalance } = require("../middlewares/checklBalance");
 
 const router = express.Router();
 // Student routes
@@ -21,7 +23,8 @@ router.get("/:matricNo", getStudent);
 router.put("/coupon/update", updateCoupon);
 
 // Pay
-router.post("/pay", makePayment);
+// Students only can spend RM6 per day
+router.post("/pay", checkBalance, makePayment);
 // Collect point
 router.post("/point/collet", collectPoint);
 

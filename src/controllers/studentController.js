@@ -107,9 +107,20 @@ exports.updateCoupon = async function (req, res, next) {
   const { matricNo, amount } = req.body;
 
   try {
+    // Get previous coupon information
+    const prevCoupon = await prisma.coupon.findUnique({
+      where: {
+        matricNo: matricNo,
+      },
+      select: {
+        total: true,
+      },
+    });
+
+    // Update coupon amount
     const student = await prisma.coupon.update({
       data: {
-        amount: amount,
+        total: amount,
       },
       where: {
         matricNo: matricNo,
@@ -119,10 +130,18 @@ exports.updateCoupon = async function (req, res, next) {
       },
     });
 
+    // Store previous coupon
+    await prisma.couponHistory.create({
+      data: {
+        matricNo: matricNo,
+        total: prevCoupon.total,
+      },
+    });
+
     return res.status(200).json({ data: student });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ error: error });
+    return res.status(400).json({ error: error });
   }
 };
 
@@ -158,13 +177,14 @@ exports.makePayment = async function (req, res, next) {
       },
     },
   });
-  // Update record
+
+  // Update coupon balance
   await prisma.coupon.update({
     data: {
       total: transaction.student.coupon[0].total - amount,
     },
     where: {
-      id: transaction.student.coupon[0].id,
+      matricNo: matricNo,
     },
   });
 
@@ -188,6 +208,7 @@ exports.collectPoint = async function (req, res, next) {
     },
   });
 
+  // Create new record
   const point = await prisma.tPoint.create({
     data: {
       transactionId: transaction.id,
@@ -202,23 +223,14 @@ exports.collectPoint = async function (req, res, next) {
 };
 
 // HELPERS
+
+// This function return transaction information
 async function makeTransaction(matricNo, cafeId, amount) {
   return await prisma.transaction.create({
     data: {
       matricNo: matricNo,
       cafeId: cafeId,
       amount: amount,
-    },
-    include: {
-      student: {
-        include: {
-          coupon: {
-            orderBy: {
-              updatedAt: "desc",
-            },
-          },
-        },
-      },
     },
   });
 }
