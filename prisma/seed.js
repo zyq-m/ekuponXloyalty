@@ -80,6 +80,10 @@ async function initRole() {
         id: 3,
         name: "ADMIN",
       },
+      {
+        id: 4,
+        name: "CAFE",
+      },
     ],
   });
 }
