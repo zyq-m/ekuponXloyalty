@@ -1,5 +1,6 @@
 const express = require("express");
 const student = require("./src/routes/studentRoute");
+const cafe = require("./src/routes/cafeRoute");
 
 const app = express();
 const port = 3000;
@@ -12,6 +13,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/student", student);
+app.use("/api/cafe", cafe);
 
 app.listen(port, () => {
   console.log(`listening on port ${port}`);
