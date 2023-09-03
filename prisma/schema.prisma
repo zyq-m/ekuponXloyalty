@@ -52,7 +52,7 @@ model Student {
   userId        String
   coupon        Coupon?
   transaction   Transaction[]
-  CouponHistory CouponHistory[]
+  couponHistory CouponHistory[]
 }
 
 model Cafe {
@@ -63,7 +63,7 @@ model Cafe {
   userId      String
   sale        Sale?
   transaction Transaction[]
-  SaleHistory SaleHistory[]
+  saleHistory SaleHistory[]
 }
 
 model Coupon {
