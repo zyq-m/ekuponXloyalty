@@ -23,3 +23,5 @@ router.get("/transaction/:cafeId", getTransaction);
 router.get("/transaction/:from/:to/:cafeId", getTransactionRange);
 // Response with pdf
 router.get("/transaction/pdf/:from/:to/:cafeId", getTransactionPdf);
+
+module.exports = router;
