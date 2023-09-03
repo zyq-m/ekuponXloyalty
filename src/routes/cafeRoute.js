@@ -8,10 +8,12 @@ const {
   getTransaction,
   getEkuponURL,
   getLoyaltyURL,
+  pdf,
 } = require("../controllers/cafeController");
 
 const router = express.Router();
 
+router.get("/pdf", pdf);
 router.get("/:cafeId", getCafe);
 
 // Get cafe QR

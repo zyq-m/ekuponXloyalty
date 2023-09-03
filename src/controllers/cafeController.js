@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const { generatePDF } = require("../utils/pdf/pdf");
 
 const prisma = new PrismaClient();
 
@@ -94,6 +95,21 @@ exports.getLoyaltyURL = async (req, res, next) => {
       url: url,
     },
   });
+};
+
+exports.pdf = async (req, res, next) => {
+  try {
+    const pdf = await generatePDF(); // return {filename: path}
+
+    return res.status(200).sendFile(pdf?.filename, {
+      headers: {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": "inline; filename=example.pdf", // use inline to view file, use attachment to download
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error });
+  }
 };
 
 // HELPER
