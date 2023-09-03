@@ -11,3 +11,6 @@ exports.icNo = faker.string.numeric(12, {
   allowLeadingZeros: true,
 });
 exports.b40 = faker.datatype.boolean();
+exports.accountNo = faker.finance.accountNumber();
+exports.cafeId = faker.internet.userName();
+exports.cafeName = `Cafe ${faker.person.firstName()}`;
