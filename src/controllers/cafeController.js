@@ -34,7 +34,7 @@ exports.getTransaction = async (req, res, next) => {
     },
   });
 
-  if (!transaction) {
+  if (!transaction.length) {
     return res.status(404).json({ message: "Not found" });
   }
 
@@ -45,7 +45,7 @@ exports.getTransactionRange = async (req, res, next) => {
   const { cafeId, from, to } = req.params;
   const transaction = await transactionOnDate(cafeId, from, to);
 
-  if (!transaction) {
+  if (!transaction.length) {
     return res.status(404).json({ message: "Not found" });
   }
 
@@ -56,7 +56,7 @@ exports.getTransactionPdf = async (req, res, next) => {
   const { cafeId, from, to } = req.params;
   const transaction = await transactionOnDate(cafeId, from, to);
 
-  if (!transaction) {
+  if (!transaction.length) {
     return res.status(404).json({ message: "Not found" });
   }
 
@@ -126,5 +126,5 @@ async function getCafeId(cafeId) {
 function generateUrl(cafeId) {
   // generate code here
 
-  return cafeId;
+  return `/url/${cafeId}`;
 }
