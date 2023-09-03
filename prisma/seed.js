@@ -4,16 +4,9 @@ const bcrypt = require("../src/utils/bcrypt");
 const prisma = new PrismaClient();
 
 async function main() {
-  let matricNo = fake.matricNo;
-  let icNo = fake.icNo;
-  let b40 = fake.b40;
-  let name = fake.name;
-  let phone = fake.phoneNo;
-  let address = fake.address;
+  const init = await initCafe();
 
-  const student = await initStudent(matricNo, icNo, b40, name, phone, address);
-
-  console.log(student);
+  console.log(init);
 }
 
 main()
@@ -26,24 +19,25 @@ main()
     process.exit(1);
   });
 
-async function initStudent(matricNo, icNo, b40, name, phoneNo, address) {
+async function initStudent() {
+  let b40 = fake.b40;
   return await prisma.student.create({
     data: {
-      matricNo: matricNo,
-      icNo: icNo,
+      matricNo: fake.matricNo,
+      icNo: fake.icNo,
       b40: b40,
 
       user: {
         create: {
           profile: {
             create: {
-              name: name,
-              phoneNo: phoneNo,
-              address: address,
+              name: fake.name,
+              phoneNo: fake.phoneNo,
+              address: fake.address,
             },
           },
 
-          password: bcrypt.hash(icNo),
+          password: bcrypt.hash(fake.icNo),
           role: {
             connect: {
               id: b40 ? 1 : 2,
@@ -54,13 +48,9 @@ async function initStudent(matricNo, icNo, b40, name, phoneNo, address) {
 
       coupon: {
         create: {
-          amount: 0,
+          total: 0,
         },
       },
-    },
-    include: {
-      coupon: true,
-      user: true,
     },
   });
 }
@@ -85,5 +75,38 @@ async function initRole() {
         name: "CAFE",
       },
     ],
+  });
+}
+
+async function initCafe() {
+  return await prisma.cafe.create({
+    data: {
+      id: fake.cafeId,
+      name: fake.cafeName,
+      accountNo: fake.accountNo,
+
+      user: {
+        create: {
+          profile: {
+            create: {
+              name: fake.name,
+              phoneNo: fake.phoneNo,
+              address: fake.address,
+            },
+          },
+
+          password: bcrypt.hash("123"),
+          role: {
+            connect: { id: 4 },
+          },
+        },
+      },
+
+      sale: {
+        create: {
+          total: 0,
+        },
+      },
+    },
   });
 }
