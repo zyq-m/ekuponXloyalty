@@ -1,5 +1,9 @@
+require("dotenv").config();
 const { PrismaClient } = require("@prisma/client");
+const jwt = require("jsonwebtoken");
+
 const { generatePDF } = require("../utils/pdf/pdf");
+const { token, secret } = require("../utils/otp");
 
 const prisma = new PrismaClient();
 
@@ -55,14 +59,24 @@ exports.getTransactionRange = async (req, res, next) => {
 
 exports.getTransactionPdf = async (req, res, next) => {
   const { cafeId, from, to } = req.params;
-  const transaction = await transactionOnDate(cafeId, from, to);
+  try {
+    const transaction = await transactionOnDate(cafeId, from, to);
 
-  if (!transaction.length) {
-    return res.status(404).json({ message: "Not found" });
+    if (!transaction.length) {
+      return res.status(404).json({ message: "Not found" });
+    }
+
+    const pdf = await generatePDF(transaction, "");
+    // Return PDF format
+    return res.status(200).sendFile(pdf?.filename, {
+      headers: {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": "attachment; filename=example.pdf", // use inline to view file, use attachment to download
+      },
+    });
+  } catch (error) {
+    return res.status(error.statusCode).send({ error: error.message });
   }
-
-  // Return PDF format
-  return res.status(200).json({ data: transaction });
 };
 
 exports.getEkuponURL = async (req, res, next) => {
@@ -74,7 +88,8 @@ exports.getEkuponURL = async (req, res, next) => {
   }
 
   const url = generateUrl(cafeId);
-  return res.status(200).json({
+
+  return res.status(201).json({
     data: {
       url: url,
     },
@@ -89,25 +104,44 @@ exports.getLoyaltyURL = async (req, res, next) => {
     return res.status(404).json({ message: "Not Found" });
   }
 
-  const url = generateUrl(cafeId);
-  return res.status(200).json({
+  // Generate token
+  // Set expires to 1 min
+  const token = jwt.sign({ id: cafeId }, process.env.OTP_SECRET, {
+    expiresIn: "60s",
+  });
+  const url = `${generateUrl(cafeId)}&&token=${token}`;
+
+  return res.status(201).json({
     data: {
       url: url,
     },
   });
 };
 
-exports.pdf = async (req, res, next) => {
-  try {
-    const pdf = await generatePDF(); // return {filename: path}
+exports.getOTP = async (req, res) => {
+  const { cafeId } = req.params;
+  const id = await getCafeId(cafeId);
 
-    return res.status(200).sendFile(pdf?.filename, {
-      headers: {
-        "Content-Type": "application/pdf",
-        "Content-Disposition": "inline; filename=example.pdf", // use inline to view file, use attachment to download
+  if (!id) {
+    return res.status(404).json({ message: "Not found" });
+  }
+
+  // Generate 6 digit number
+  // Hash otp
+  try {
+    // Store in table Sale
+    await prisma.sale.update({
+      data: {
+        otp: secret.base32,
+      },
+      where: {
+        cafeId: cafeId,
       },
     });
+
+    return res.status(200).json({ data: { otp: token } });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ error: error });
   }
 };
@@ -141,6 +175,10 @@ async function getCafeId(cafeId) {
 // Generate url
 function generateUrl(cafeId) {
   // generate code here
+  const hostname =
+    process.env.NODE_ENV === "production"
+      ? process.env.PROD_BASE_URL
+      : process.env.LOCAL_BASE_URL;
 
-  return `/url/${cafeId}`;
+  return `${hostname}?id=${cafeId}`;
 }
