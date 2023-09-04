@@ -5,53 +5,32 @@ const prisma = new PrismaClient();
 // Get students
 exports.getStudent = async function (req, res) {
   const { matricNo } = req.params;
-  const { b40 } = req.body;
-
-  if (matricNo) {
-    const student = await prisma.student.findUnique({
-      where: {
-        matricNo: matricNo,
-      },
-
-      select: {
-        matricNo: true,
-        icNo: true,
-        user: {
-          select: {
-            role: true,
-          },
-        },
-
-        coupon: {
-          select: {
-            amount: true,
-          },
-        },
-      },
-    });
-
-    if (!student) {
-      return res.status(404).json({ message: "Not found" });
-    }
-
-    return res.status(200).json({ data: student });
-  }
-
-  if (b40 == undefined && !matricNo) {
-    // Find all students
-    const students = await prisma.student.findMany();
-
-    return res.status(200).json({ data: students });
-  }
-
-  // Find either b40 or not
-  const students = await prisma.student.findMany({
+  const student = await prisma.student.findUnique({
     where: {
-      b40: b40,
+      matricNo: matricNo,
+    },
+
+    select: {
+      matricNo: true,
+      icNo: true,
+      user: {
+        select: {
+          profile: true,
+        },
+      },
+      coupon: {
+        select: {
+          total: true,
+        },
+      },
     },
   });
 
-  return res.status(200).json({ data: students });
+  if (!student) {
+    return res.status(404).json({ message: "Not found" });
+  }
+
+  return res.status(200).json({ data: student });
 };
 
 // Create new students
@@ -148,25 +127,34 @@ exports.updateCoupon = async function (req, res) {
 // Make payment
 exports.makePayment = async function (req, res) {
   const { matricNo, cafeId, amount } = req.body;
-  const transaction = await makeTransaction(matricNo, cafeId, amount);
-  // Create record in table
-  const pay = await prisma.tWallet.create({
+  const transaction = await prisma.transaction.create({
     data: {
-      transactionId: transaction.id,
+      matricNo: matricNo,
+      cafeId: cafeId,
+      amount: amount,
     },
-    select: {
-      transaction: {
-        select: {
-          cafe: true,
-          cafeId: true,
-          matricNo: true,
-          student: {
-            select: {
-              user: {
-                select: {
-                  profile: {
-                    select: {
-                      name: true,
+  });
+
+  try {
+    // Create record in table
+    const pay = await prisma.tWallet.create({
+      data: {
+        transactionId: transaction.id,
+      },
+      select: {
+        transaction: {
+          select: {
+            cafe: true,
+            cafeId: true,
+            matricNo: true,
+            student: {
+              select: {
+                user: {
+                  select: {
+                    profile: {
+                      select: {
+                        name: true,
+                      },
                     },
                   },
                 },
@@ -175,62 +163,95 @@ exports.makePayment = async function (req, res) {
           },
         },
       },
-    },
-  });
+    });
 
-  // Update coupon balance
-  await prisma.coupon.update({
-    data: {
-      total: transaction.student.coupon[0].total - amount,
-    },
-    where: {
-      matricNo: matricNo,
-    },
-  });
+    if (!pay) {
+      return res.status(404).send({ message: "Invalid transaction" });
+    }
 
-  if (!pay) {
-    return res.status(404).send({ message: "Invalid transaction" });
+    // Update coupon balance
+    await prisma.coupon.update({
+      data: {
+        total: transaction.student.coupon[0].total - amount,
+      },
+      where: {
+        matricNo: matricNo,
+      },
+    });
+
+    return res.status(201).send({ data: pay });
+  } catch (error) {
+    return res.status(500).send({ error: error });
   }
-
-  return res.status(201).send({ data: pay });
 };
 
 // Collect point
 exports.collectPoint = async function (req, res) {
   const { matricNo, cafeId, amount } = req.body;
 
-  // Create new record
-  const transaction = await prisma.transaction.create({
-    data: {
-      cafeId: cafeId,
-      matricNo: matricNo,
-      amount: amount,
-    },
-  });
+  try {
+    // Create new record
+    const transaction = await prisma.transaction.create({
+      data: {
+        cafeId: cafeId,
+        matricNo: matricNo,
+        amount: amount,
+      },
+    });
 
-  // Create new record
-  const point = await prisma.tPoint.create({
-    data: {
-      transactionId: transaction.id,
-    },
-  });
+    // Create new record
+    const point = await prisma.tPoint.create({
+      data: {
+        transactionId: transaction.id,
+      },
+    });
 
-  if (!point) {
-    return res.status(404).json({ message: "Invalid transaction" });
+    if (!point) {
+      return res.status(404).json({ message: "Invalid transaction" });
+    }
+
+    return res.status(201).json({ data: point });
+  } catch (error) {
+    return res.status(500).json({ error: error });
   }
-
-  return res.status(201).json({ data: point });
 };
 
-// HELPERS
+exports.getTransaction = async function (req, res) {
+  const { matricNo, b40 } = req.params;
 
-// This function return transaction information
-async function makeTransaction(matricNo, cafeId, amount) {
-  return await prisma.transaction.create({
-    data: {
+  const transaction = await prisma.transaction.findMany({
+    where: {
       matricNo: matricNo,
-      cafeId: cafeId,
-      amount: amount,
+    },
+    include: {
+      walletTransaction: b40,
+      pointTransaction: !b40,
     },
   });
-}
+
+  if (!transaction.length) {
+    return res.status(404).json({ message: "Not found" });
+  }
+
+  return res.status(200).json({ data: transaction });
+};
+
+// Get transaction by date
+exports.getTransactionRange = async (req, res) => {
+  const { matricNo, from, to } = req.params;
+  const transaction = await prisma.transaction.findMany({
+    where: {
+      matricNo: matricNo,
+      createdAt: {
+        lte: from,
+        gte: to,
+      },
+    },
+  });
+
+  if (!transaction.length) {
+    return res.status(404).json({ message: "Not found" });
+  }
+
+  return res.status(200).json({ data: transaction });
+};
