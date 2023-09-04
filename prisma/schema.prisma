@@ -11,15 +11,15 @@ datasource db {
 }
 
 model User {
-  id       String    @id @default(cuid())
+  id       String   @id @default(cuid())
   password String
-  active   Boolean   @default(true)
-  role     Role      @relation(fields: [roleId], references: [id])
+  active   Boolean  @default(true)
+  role     Role     @relation(fields: [roleId], references: [id])
   roleId   Int
-  student  Student[]
-  cafe     Cafe[]
-  profile  Profile[]
-  admin    Admin[]
+  student  Student?
+  cafe     Cafe?
+  profile  Profile?
+  admin    Admin?
 }
 
 model Role {
@@ -34,13 +34,13 @@ model Profile {
   phoneNo String? @unique @db.VarChar(12)
   address String? @db.Text
   user    User    @relation(fields: [userId], references: [id])
-  userId  String
+  userId  String  @unique
 }
 
 model Admin {
   email  String  @id @db.VarChar(255)
   user   User    @relation(fields: [userId], references: [id])
-  userId String
+  userId String  @unique
   claim  Claim[]
 }
 
@@ -49,7 +49,7 @@ model Student {
   icNo          String          @unique @db.VarChar(12)
   b40           Boolean         @default(false)
   user          User            @relation(fields: [userId], references: [id])
-  userId        String
+  userId        String          @unique
   coupon        Coupon?
   transaction   Transaction[]
   couponHistory CouponHistory[]
@@ -60,7 +60,7 @@ model Cafe {
   name        String
   accountNo   String
   user        User          @relation(fields: [userId], references: [id])
-  userId      String
+  userId      String        @unique
   sale        Sale?
   transaction Transaction[]
   saleHistory SaleHistory[]
