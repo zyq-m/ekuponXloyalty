@@ -1,4 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
+const jwt = require("jsonwebtoken");
+const { verify } = require("../utils/otp");
 
 const prisma = new PrismaClient();
 
@@ -186,8 +188,31 @@ exports.makePayment = async function (req, res) {
 };
 
 // Collect point
+// Student can scan one-time QR (token)
+// Student (ios) can input OTP
 exports.collectPoint = async function (req, res) {
-  const { matricNo, cafeId, amount } = req.body;
+  const { matricNo, cafeId, amount, token, otp, pointId } = req.body;
+
+  // Token or OTP must be provided
+  if ((!token || otp) && (token || !otp)) {
+    return res.status(400).send({ message: "Please provide credential" });
+  }
+
+  // Verify token (one-time-URL) if exists
+  if (token) {
+    jwt.verify(token, process.env.OTP_SECRET, (err, decoded) => {
+      if (err) {
+        return res.status(400).send({ message: "URL expired" });
+      }
+    });
+  }
+
+  // Verify OTP if exists
+  if (otp) {
+    if (!verify(otp)) {
+      return res.status(400).send({ message: "OTP expired" });
+    }
+  }
 
   try {
     // Create new record
@@ -203,6 +228,7 @@ exports.collectPoint = async function (req, res) {
     const point = await prisma.tPoint.create({
       data: {
         transactionId: transaction.id,
+        pointId: pointId,
       },
     });
 
