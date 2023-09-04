@@ -8,19 +8,18 @@ const {
   getTransaction,
   getEkuponURL,
   getLoyaltyURL,
-  pdf,
+  getOTP,
 } = require("../controllers/cafeController");
 
 const router = express.Router();
 
-router.get("/pdf", pdf);
 router.get("/:cafeId", getCafe);
 
 // Get cafe QR
 router.get("/qr/ekupon/:cafeId", getEkuponURL);
 router.get("/qr/loyalty/:cafeId", getLoyaltyURL);
 // Get one-time code
-router.get("/one-time/:cafeId");
+router.get("/one-time/:cafeId", getOTP);
 
 // Transaction
 router.get("/transaction/:cafeId", getTransaction);
