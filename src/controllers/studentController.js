@@ -3,7 +3,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 // Get students
-exports.getStudent = async function (req, res, next) {
+exports.getStudent = async function (req, res) {
   const { matricNo } = req.params;
   const { b40 } = req.body;
 
@@ -55,7 +55,7 @@ exports.getStudent = async function (req, res, next) {
 };
 
 // Create new students
-exports.newStudent = async function (req, res, next) {
+exports.newStudent = async function (req, res) {
   const { matricNo, icNo, b40, name, phoneNo, address } = req.body;
 
   try {
@@ -103,7 +103,7 @@ exports.newStudent = async function (req, res, next) {
 };
 
 // Update coupon (b40 only)
-exports.updateCoupon = async function (req, res, next) {
+exports.updateCoupon = async function (req, res) {
   const { matricNo, amount } = req.body;
 
   try {
@@ -146,7 +146,7 @@ exports.updateCoupon = async function (req, res, next) {
 };
 
 // Make payment
-exports.makePayment = async function (req, res, next) {
+exports.makePayment = async function (req, res) {
   const { matricNo, cafeId, amount } = req.body;
   const transaction = await makeTransaction(matricNo, cafeId, amount);
   // Create record in table
@@ -196,7 +196,7 @@ exports.makePayment = async function (req, res, next) {
 };
 
 // Collect point
-exports.collectPoint = async function (req, res, next) {
+exports.collectPoint = async function (req, res) {
   const { matricNo, cafeId, amount } = req.body;
 
   // Create new record

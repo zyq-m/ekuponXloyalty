@@ -7,7 +7,7 @@ const { token, secret } = require("../utils/otp");
 
 const prisma = new PrismaClient();
 
-exports.getCafe = async function getCafe(req, res, next) {
+exports.getCafe = async function getCafe(req, res) {
   const { cafeId } = req.params;
   const cafe = await prisma.cafe.findUnique({
     where: {
@@ -31,7 +31,7 @@ exports.getCafe = async function getCafe(req, res, next) {
   return res.status(200).json({ data: cafe });
 };
 
-exports.getTransaction = async (req, res, next) => {
+exports.getTransaction = async (req, res) => {
   const { cafeId } = req.params;
   const transaction = await prisma.transaction.findMany({
     where: {
@@ -46,7 +46,7 @@ exports.getTransaction = async (req, res, next) => {
   return res.status(200).json({ data: transaction });
 };
 
-exports.getTransactionRange = async (req, res, next) => {
+exports.getTransactionRange = async (req, res) => {
   const { cafeId, from, to } = req.params;
   const transaction = await transactionOnDate(cafeId, from, to);
 
@@ -57,7 +57,7 @@ exports.getTransactionRange = async (req, res, next) => {
   return res.status(200).json({ data: transaction });
 };
 
-exports.getTransactionPdf = async (req, res, next) => {
+exports.getTransactionPdf = async (req, res) => {
   const { cafeId, from, to } = req.params;
   try {
     const transaction = await transactionOnDate(cafeId, from, to);
@@ -79,7 +79,7 @@ exports.getTransactionPdf = async (req, res, next) => {
   }
 };
 
-exports.getEkuponURL = async (req, res, next) => {
+exports.getEkuponURL = async (req, res) => {
   const { cafeId } = req.params;
   const id = await getCafeId(cafeId);
 
@@ -96,7 +96,7 @@ exports.getEkuponURL = async (req, res, next) => {
   });
 };
 
-exports.getLoyaltyURL = async (req, res, next) => {
+exports.getLoyaltyURL = async (req, res) => {
   const { cafeId } = req.params;
   const id = await getCafeId(cafeId);
 
