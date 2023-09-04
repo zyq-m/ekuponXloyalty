@@ -86,6 +86,7 @@ model Sale {
   cafe   Cafe    @relation(fields: [cafeId], references: [id])
   cafeId String  @unique @db.VarChar(12)
   total  Decimal @default(0.00) @db.Money
+  otp    String?
 }
 
 model SaleHistory {
