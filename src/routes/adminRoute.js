@@ -1,35 +1,33 @@
 const express = require("express");
 
-// Require models
-const {
-  createStudent,
-  getStudent,
-} = require("../controllers/studentController");
+// Require controllers
+const adminController = require("../controllers/adminController");
 
 const router = express.Router();
 
-// Get list of students
-router.get("/", async (req, res) => {
-  const students = await getStudent();
+// Get all students
+router.get("/student", adminController.getStudent);
+// Get all cafe
+router.get("/cafe", adminController.getCafe);
 
-  return res.send({ data: students }).status(200);
-});
+// Get cafe & student transactions
+router.get("/student/transactions", adminController.getTransactionStudent);
+router.get("/cafe/transactions", adminController.getTransactionCafe);
+// Get student points (non-b40)
+router.get("/student/points", adminController.getTransactionStudentB40);
 
-// Create a new student
-router.post("/create/student", async (req, res) => {
-  const { matricNo, icNo, b40, name, phoneNo, address } = req.body;
-  try {
-    const student = await createStudent(
-      matricNo,
-      icNo,
-      b40,
-      name,
-      phoneNo,
-      address
-    );
+// Verify cafe's claims
+router.post("/cafe/claim");
 
-    return res.send({ data: student }).status(200);
-  } catch (error) {
-    return res.send({ error }).status(500);
-  }
-});
+// Suspend a user
+router.put("/user/suspend", adminController.suspendUser);
+
+// Assign student's wallet (b40)
+router.put("/student/wallet", adminController.updateWallet);
+
+// Register user
+router.post("/user/register/student", adminController.registerStudent);
+router.post("/user/register/cafe", adminController.registerCafe);
+router.post("/user/register/admin");
+
+module.exports = router;
