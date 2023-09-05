@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const student = require("./src/routes/studentRoute");
 const cafe = require("./src/routes/cafeRoute");
