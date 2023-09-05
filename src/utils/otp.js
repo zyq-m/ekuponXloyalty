@@ -1,21 +1,26 @@
 const speakeasy = require("speakeasy");
 
-// Generate a secret key.
-exports.secret = speakeasy.generateSecret({ length: 20 });
+const { base32: secret } = speakeasy.generateSecret({ length: 20 });
 
-// Returns token for the secret at the current time
-// Compare this to user input
-exports.token = speakeasy.totp({
-  secret: this.secret.base32,
-  encoding: "base32",
-  time: 60,
-});
+function generateToken(secret) {
+  return speakeasy.totp({
+    secret: secret,
+    encoding: "base32",
+    step: 30,
+  });
+}
 
-exports.verify = function (token) {
+function verify(token, secret) {
   return speakeasy.totp.verify({
-    secret: this.secret.base32,
+    secret: secret,
     encoding: "base32",
     token: token,
-    window: 6,
+    window: 1,
   });
+}
+
+module.exports = {
+  secret,
+  generateToken,
+  verify,
 };

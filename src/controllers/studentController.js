@@ -127,6 +127,7 @@ exports.updateCoupon = async function (req, res) {
 };
 
 // Make payment
+// ! NEED REFACTOR
 exports.makePayment = async function (req, res) {
   const { matricNo, cafeId, amount } = req.body;
   const transaction = await prisma.transaction.create({
@@ -190,6 +191,7 @@ exports.makePayment = async function (req, res) {
 // Collect point
 // Student can scan one-time QR (token)
 // Student (ios) can input OTP
+// ! NEED REFACTOR
 exports.collectPoint = async function (req, res) {
   const { matricNo, cafeId, amount, token, otp, pointId } = req.body;
 
@@ -200,17 +202,28 @@ exports.collectPoint = async function (req, res) {
 
   // Verify token (one-time-URL) if exists
   if (token) {
-    jwt.verify(token, process.env.OTP_SECRET, (err, decoded) => {
-      if (err) {
-        return res.status(400).send({ message: "URL expired" });
-      }
-    });
+    try {
+      jwt.verify(token, process.env.OTP_SECRET);
+    } catch (error) {
+      return res.status(400).json({ message: "URL expired", error: error });
+    }
   }
 
   // Verify OTP if exists
   if (otp) {
-    if (!verify(otp)) {
-      return res.status(400).send({ message: "OTP expired" });
+    const secret = await prisma.sale.findUnique({
+      select: {
+        otp: true,
+      },
+      where: {
+        cafeId: cafeId,
+      },
+    });
+
+    const isVerified = verify(otp, secret.otp);
+
+    if (!isVerified) {
+      return res.status(400).json({ message: "OTP expired" });
     }
   }
 
@@ -223,7 +236,6 @@ exports.collectPoint = async function (req, res) {
         amount: amount,
       },
     });
-
     // Create new record
     const point = await prisma.tPoint.create({
       data: {
@@ -231,10 +243,16 @@ exports.collectPoint = async function (req, res) {
         pointId: pointId,
       },
     });
-
     if (!point) {
       return res.status(404).json({ message: "Invalid transaction" });
     }
+
+    // Update coupon total
+    await prisma.coupon.update({
+      data: {
+        total: 0,
+      },
+    });
 
     return res.status(201).json({ data: point });
   } catch (error) {

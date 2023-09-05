@@ -21,9 +21,9 @@ router.get("/transaction/:matricNo", getTransaction);
 router.get("/transaction/:from/:to/:matricNo", getTransactionRange);
 
 // Pay
-// Students only can spend RM6 per day
+// Students only can spend RM6 per day (b40)
 router.post("/pay", checkBalance, makePayment);
-// Collect point
-router.post("/point/collet", collectPoint);
+// Collect point (non-b40)
+router.post("/point/collect", collectPoint);
 
 module.exports = router;

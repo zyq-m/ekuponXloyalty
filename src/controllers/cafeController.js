@@ -1,9 +1,8 @@
-require("dotenv").config();
 const { PrismaClient } = require("@prisma/client");
 const jwt = require("jsonwebtoken");
 
 const { generatePDF } = require("../utils/pdf/pdf");
-const { token, secret } = require("../utils/otp");
+const { generateToken, secret } = require("../utils/otp");
 
 const prisma = new PrismaClient();
 
@@ -19,6 +18,11 @@ exports.getCafe = async function getCafe(req, res) {
       sale: {
         select: {
           total: true,
+        },
+      },
+      user: {
+        select: {
+          profile: true,
         },
       },
     },
@@ -129,10 +133,11 @@ exports.getOTP = async (req, res) => {
   // Generate 6 digit number
   // Hash otp
   try {
+    const token = generateToken(secret);
     // Store in table Sale
     await prisma.sale.update({
       data: {
-        otp: secret.base32,
+        otp: secret,
       },
       where: {
         cafeId: cafeId,
