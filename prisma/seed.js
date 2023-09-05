@@ -4,7 +4,7 @@ const bcrypt = require("../src/utils/bcrypt");
 const prisma = new PrismaClient();
 
 async function main() {
-  const init = await initCafe();
+  const init = await initPoint();
 
   console.log(init);
 }
@@ -108,5 +108,21 @@ async function initCafe() {
         },
       },
     },
+  });
+}
+
+async function initPoint() {
+  return await prisma.point.createMany({
+    data: [
+      {
+        name: "Point 1",
+      },
+      {
+        name: "Point 2",
+      },
+      {
+        name: "Point 3",
+      },
+    ],
   });
 }
