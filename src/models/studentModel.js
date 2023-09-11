@@ -113,3 +113,8 @@ exports.updateCoupon = async (matricNo, amount) => {
     },
   });
 };
+
+// Count total of students
+exports.total = async () => {
+  return await prisma.student.count();
+};

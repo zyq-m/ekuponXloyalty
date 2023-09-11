@@ -61,3 +61,8 @@ exports.getCafe = async cafeId => {
 
   return await prisma.cafe.findMany();
 };
+
+// Count total of cafe
+exports.total = async () => {
+  return await prisma.cafe.count();
+};
