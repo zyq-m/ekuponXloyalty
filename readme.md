@@ -43,3 +43,11 @@ node -e "console.log(require('crypto').randomBytes(256).toString('base64'));"
 I think I should change the implementation. Use tranditional approach instead of speakeasy library.
 
 A cafe generate an OTP key, it store in table Sale. It has expired time. Everytime a student input the key, column OTP (table Sale) will be updated with null value. This can prevent a student input same key multiple times.
+
+## Setup
+
+Make sure before migrate, stop your server to avoid error. Run the following command to load database
+
+```bash
+npm run prisma-migrate
+```
