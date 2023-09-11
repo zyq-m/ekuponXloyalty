@@ -27,7 +27,7 @@ Actions:
 
 - view profile
 - view transactions history
-- make a coupon transaction
+- make a coupon transaction (only-b40)
 - claim a point
 
 ## Generate Secrete Key
