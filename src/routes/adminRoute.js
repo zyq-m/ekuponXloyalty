@@ -15,6 +15,8 @@ router.get("/student/transactions", adminController.getTransactionStudent);
 router.get("/cafe/transactions", adminController.getTransactionCafe);
 // Get student points (non-b40)
 router.get("/student/points", adminController.getTransactionStudentB40);
+// Get overall student, cafe & transaction
+router.get("/overall", adminController.getOverall);
 
 // Verify cafe's claims
 router.post("/cafe/claim");
