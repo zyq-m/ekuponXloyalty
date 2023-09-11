@@ -118,3 +118,14 @@ exports.updateCoupon = async (matricNo, amount) => {
 exports.total = async () => {
   return await prisma.student.count();
 };
+
+exports.getUserId = async matricNo => {
+  return await prisma.student.findUnique({
+    where: {
+      matricNo,
+    },
+    select: {
+      userId: true,
+    },
+  });
+};

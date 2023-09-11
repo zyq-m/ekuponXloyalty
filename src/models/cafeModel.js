@@ -66,3 +66,10 @@ exports.getCafe = async cafeId => {
 exports.total = async () => {
   return await prisma.cafe.count();
 };
+
+exports.getUserId = async id => {
+  return await prisma.cafe.findUnique({
+    where: { id },
+    select: { userId: true },
+  });
+};
