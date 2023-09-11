@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx nodemon index.js",
     "seed": "npx prisma db seed",
-    "prisma-migarate": "npx prisma migarate dev"
+    "prisma-migrate": "npx prisma migrate dev"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
