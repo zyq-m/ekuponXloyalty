@@ -1,8 +1,10 @@
 require("dotenv").config();
 const express = require("express");
+// Require routes
 const student = require("./src/routes/studentRoute");
 const cafe = require("./src/routes/cafeRoute");
 const admin = require("./src/routes/adminRoute");
+const feedback = require("./src/routes/feedbackRoute");
 
 const app = express();
 const port = 3000;
@@ -17,6 +19,7 @@ app.get("/", (req, res) => {
 app.use("/api/student", student);
 app.use("/api/cafe", cafe);
 app.use("/api/admin", admin);
+app.use("/api/feedback", feedback);
 
 app.listen(port, () => {
   console.log(`listening on port ${port}`);
