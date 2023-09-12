@@ -11,16 +11,17 @@ datasource db {
 }
 
 model User {
-  id       String     @id @default(cuid())
-  password String
-  active   Boolean    @default(true)
-  role     Role       @relation(fields: [roleId], references: [id])
-  roleId   Int
-  student  Student?
-  cafe     Cafe?
-  profile  Profile?
-  admin    Admin?
-  Feedback Feedback[]
+  id        String      @id @default(cuid())
+  password  String
+  active    Boolean     @default(true)
+  role      Role        @relation(fields: [roleId], references: [id])
+  roleId    Int
+  student   Student?
+  cafe      Cafe?
+  profile   Profile?
+  admin     Admin?
+  Feedback  Feedback[]
+  UserToken UserToken[]
 }
 
 model Role {
@@ -147,4 +148,11 @@ model Feedback {
   user        User    @relation(fields: [userId], references: [id])
   userId      String
   description String? @db.Text
+}
+
+model UserToken {
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  token     String   @unique
+  createdAt DateTime @default(now())
 }
