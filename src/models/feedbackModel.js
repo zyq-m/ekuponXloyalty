@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const { findId } = require("../utils/findUserId");
 
 const prisma = new PrismaClient();
 
