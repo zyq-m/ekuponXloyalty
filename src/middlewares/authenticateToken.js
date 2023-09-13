@@ -1,10 +1,13 @@
 const { verifyAccessToken } = require("../services/jwt");
 
 exports.authenticateToken = (req, res, next) => {
+  // Get access token from request header
   const authHeader = req.headers["authorization"];
   const accessToken = authHeader && authHeader.split(" ")[1];
 
-  if (!accessToken) return res.sendStatus(401);
+  if (!accessToken) {
+    return res.sendStatus(401);
+  }
 
   try {
     const decoded = verifyAccessToken(accessToken);

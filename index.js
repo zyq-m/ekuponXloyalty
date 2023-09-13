@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", auth);
-app.use(authenticateToken);
+app.use(authenticateToken); // Every incomming request it will validate token
 app.use("/api/student", student);
 app.use("/api/cafe", cafe);
 app.use("/api/admin", admin);
