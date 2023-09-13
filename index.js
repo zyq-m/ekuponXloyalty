@@ -5,6 +5,7 @@ const student = require("./src/routes/studentRoute");
 const cafe = require("./src/routes/cafeRoute");
 const admin = require("./src/routes/adminRoute");
 const feedback = require("./src/routes/feedbackRoute");
+const auth = require("./src/routes/authRoute");
 
 const app = express();
 const port = 3000;
@@ -16,6 +17,7 @@ app.get("/", (req, res) => {
   res.send("hello world");
 });
 
+app.use("/auth", auth);
 app.use("/api/student", student);
 app.use("/api/cafe", cafe);
 app.use("/api/admin", admin);
