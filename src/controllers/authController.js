@@ -1,25 +1,16 @@
-const { PrismaClient } = require("@prisma/client");
-const { findId } = require("../utils/findUserId");
+const { getUser, storeRefreshToken } = require("../models/useModel");
 const { generateToken } = require("../services/jwt");
 const { check } = require("../utils/bcrypt");
-
-const prisma = new PrismaClient();
 
 exports.login = async (req, res) => {
   const { id, password } = req.body;
 
   try {
-    const userId = await findId(id);
-    // Find user id
-    if (!userId) {
+    const user = await getUser(id);
+
+    if (!user) {
       return res.status(404).message("Invalid credentials");
     }
-
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
 
     // Check password
     const isValid = check(password, user.password);
@@ -30,14 +21,7 @@ exports.login = async (req, res) => {
 
     // Generate token
     const { accessToken, refreshToken } = generateToken(user);
-
-    // Store refresh token
-    await prisma.userToken.create({
-      data: {
-        token: refreshToken,
-        userId: user.id,
-      },
-    });
+    await storeRefreshToken(refreshToken, user.id);
 
     return res.status(200).send({ accessToken, refreshToken });
   } catch (error) {
