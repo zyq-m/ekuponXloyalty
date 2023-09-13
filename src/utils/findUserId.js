@@ -1,9 +1,6 @@
-const { PrismaClient } = require("@prisma/client");
-const studentModel = require("./studentModel");
-const cafeModel = require("./cafeModel");
-const adminModel = require("./adminModel");
-
-const prisma = new PrismaClient();
+const studentModel = require("../models/studentModel");
+const cafeModel = require("../models/cafeModel");
+const adminModel = require("../models/adminModel");
 
 // HELPER
 exports.findId = async id => {
