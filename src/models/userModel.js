@@ -4,15 +4,17 @@ const { findId } = require("../utils/findUserId");
 const prisma = new PrismaClient();
 
 exports.getUser = async id => {
-  const isExits = await findId(id);
+  // findId(id) will return
+  // { status: 'fulfilled', value: { userId: 'bla bla' }
+  const isExist = await findId(id);
 
-  if (!isExits) {
+  if (!isExist) {
     return false;
   }
 
   return await prisma.user.findUnique({
     where: {
-      id: isExits,
+      id: isExist.value.userId,
     },
   });
 };

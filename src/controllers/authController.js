@@ -1,4 +1,4 @@
-const { getUser } = require("../models/useModel");
+const { getUser } = require("../models/userModel");
 const userTokenModel = require("../models/userTokenModel");
 const jwt = require("../services/jwt");
 const { check } = require("../utils/bcrypt");
@@ -28,6 +28,7 @@ exports.login = async (req, res) => {
 
     return res.status(200).send({ accessToken, refreshToken });
   } catch (error) {
+    console.log(error);
     return res.status(500).send({ error: error });
   }
 };
