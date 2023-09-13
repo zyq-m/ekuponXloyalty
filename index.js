@@ -6,6 +6,8 @@ const cafe = require("./src/routes/cafeRoute");
 const admin = require("./src/routes/adminRoute");
 const feedback = require("./src/routes/feedbackRoute");
 const auth = require("./src/routes/authRoute");
+// Require middleware
+const { authenticateToken } = require("./src/middlewares/authenticateToken");
 
 const app = express();
 const port = 3000;
@@ -18,6 +20,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", auth);
+app.use(authenticateToken);
 app.use("/api/student", student);
 app.use("/api/cafe", cafe);
 app.use("/api/admin", admin);
