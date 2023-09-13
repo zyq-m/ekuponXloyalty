@@ -16,13 +16,3 @@ exports.getUser = async id => {
     },
   });
 };
-
-exports.storeRefreshToken = async (refreshToken, userId) => {
-  // Store refresh token
-  await prisma.userToken.create({
-    data: {
-      token: refreshToken,
-      userId: userId,
-    },
-  });
-};
