@@ -74,6 +74,10 @@ Every time you need to modify your prisma model, use this command to avoid creat
 npx prisma db push
 ```
 
+### PDF
+
+PDF generator have been created. Just need to create a pdf template (in html) depend on your use cases.
+
 ## Setup
 
 Make sure before migrate, stop your server to avoid error. Run the following command to load database
