@@ -4,6 +4,8 @@ const helmet = require("helmet");
 const xssClean = require("xss-clean");
 const hpp = require("hpp");
 const rateLimit = require("express-rate-limit");
+const { createServer } = require("http");
+const { Server } = require("socket.io");
 // Require routes
 const student = require("./src/routes/studentRoute");
 const cafe = require("./src/routes/cafeRoute");
@@ -15,6 +17,8 @@ const { authenticateToken } = require("./src/middlewares/authenticateToken");
 
 const app = express();
 const port = 3000;
+const server = createServer(app);
+const io = new Server(server);
 
 app.use(helmet());
 app.use(hpp());
