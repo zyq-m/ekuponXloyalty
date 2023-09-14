@@ -78,6 +78,10 @@ npx prisma db push
 
 PDF generator have been created. Just need to create a pdf template (in html) depend on your use cases.
 
+### WebSocket
+
+Try to implement websocket using socket.io.
+
 ## Setup
 
 Make sure before migrate, stop your server to avoid error. Run the following command to load database
