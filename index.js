@@ -44,6 +44,6 @@ app.use("/api/cafe", cafe);
 app.use("/api/admin", admin);
 app.use("/api/feedback", feedback);
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`listening on port ${port}`);
 });
