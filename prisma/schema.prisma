@@ -55,8 +55,8 @@ model Student {
   coupon        Coupon?
   transaction   Transaction[]
   couponHistory CouponHistory[]
-  Point         Point?
-  PointHistory  PointHistory[]
+  point         Point?
+  pointHistory  PointHistory[]
 }
 
 model Cafe {
