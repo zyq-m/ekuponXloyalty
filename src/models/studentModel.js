@@ -130,7 +130,24 @@ exports.getUserId = async matricNo => {
   });
 };
 
-// Get b40 student's wallet amount
+// Get b40 student's total wallet
+exports.getWalletTotal = async matricNo => {
+  return await prisma.student.findUnique({
+    where: {
+      b40: true,
+      matricNo: matricNo,
+    },
+    select: {
+      coupon: {
+        select: {
+          total: true,
+        },
+      },
+    },
+  });
+};
+
+// Get student's total point
 exports.getWalletTotal = async matricNo => {
   return await prisma.student.findUnique({
     where: {

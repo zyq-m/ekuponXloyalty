@@ -1,6 +1,6 @@
-const studentModel = require("../models/studentModel");
-const cafeModel = require("../models/cafeModel");
-const transactionModel = require("../models/transactionModel");
+const studentModel = require("../../models/studentModel");
+const cafeModel = require("../../models/cafeModel");
+const transactionModel = require("../../models/transactionModel");
 
 module.exports = (io, socket) => {
   // Get overall student, cafe & transaction

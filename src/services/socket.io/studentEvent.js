@@ -18,6 +18,9 @@ module.exports = (io, socket) => {
       io.emit("student:wallet-total", { error: error });
     }
   });
+
+  // Get student's point
+  // socket.on("student:");
 };
 
 // Better kita buat payment guna direct api tanpa guna socket
