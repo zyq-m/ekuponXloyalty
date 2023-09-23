@@ -143,19 +143,24 @@ exports.getWalletTotal = async matricNo => {
           total: true,
         },
       },
+      point: {
+        select: {
+          total: true,
+        },
+      },
     },
   });
 };
 
 // Get student's total point
-exports.getWalletTotal = async matricNo => {
+exports.getPointTotal = async matricNo => {
   return await prisma.student.findUnique({
     where: {
-      b40: true,
+      b40: false,
       matricNo: matricNo,
     },
     select: {
-      coupon: {
+      point: {
         select: {
           total: true,
         },
