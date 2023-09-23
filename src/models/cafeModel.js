@@ -73,3 +73,30 @@ exports.getUserId = async id => {
     select: { userId: true },
   });
 };
+
+exports.getTotalSales = async cafeId => {
+  return await prisma.sale.findUnique({
+    where: {
+      cafeId,
+    },
+    select: {
+      total: true,
+    },
+  });
+};
+
+exports.getLatestTransactions = async cafeId => {
+  return await prisma.tWallet.findMany({
+    where: {
+      transaction: {
+        cafeId,
+      },
+    },
+    orderBy: {
+      transaction: {
+        createdAt: "desc",
+      },
+    },
+    take: 3,
+  });
+};
