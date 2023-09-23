@@ -33,6 +33,7 @@
     "express-rate-limit": "^7.0.0",
     "helmet": "^7.0.0",
     "hpp": "^0.2.3",
+    "html2canvas": "^1.4.1",
     "jsonwebtoken": "^9.0.2",
     "pdf-creator-node": "^2.3.5",
     "speakeasy": "^2.0.0",

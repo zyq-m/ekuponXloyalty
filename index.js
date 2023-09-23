@@ -43,3 +43,20 @@ app.use("/api/feedback", feedback);
 app.listen(port, () => {
   console.log(`listening on port ${port}`);
 });
+
+// TEST PDF
+const { generatePDF } = require("./src/utils/pdf/pdf");
+app.get("/pdf", async (req, res) => {
+  try {
+    const pdf = await generatePDF(req);
+
+    res.status(200).sendFile(pdf?.filename, {
+      headers: {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": "inline; filename=example.pdf", // use inline to view file, use attachment to download
+      },
+    });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});

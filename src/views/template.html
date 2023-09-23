@@ -1,17 +1,411 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Hello world!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cafes Transactions</title>
+    <style>
+      * {
+        font-size: 14px;
+        font-family: "Times New Roman", Times, serif;
+      }
+      img {
+        width: 100%;
+        max-width: 10rem;
+      }
+
+      h1 {
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid black;
+      }
+
+      table {
+        width: 100%;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid black;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding-top: 4px;
+        padding-bottom: 4px;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      .text-center {
+        text-align: center;
+      }
+    </style>
   </head>
   <body>
-    <h1>User List</h1>
+    <button type="button" onclick="genPDF()">Generate</button>
+    <div id="pdf">
+      <img src="/assets/logo_left.png" alt="UniSZA" />
+      <h1>eKupon@UniSZA Transactions (2023-06-11-2023-07-01)</h1>
+      <table id="tf">
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Cafe Name</th>
+            <th>Cafe Address</th>
+            <th>Cafe Owners</th>
+            <th>Mobile No.</th>
+            <th>Bank Account No.</th>
+            <th>Bank Name</th>
+            <th>Transactions</th>
+            <th>Amount(RM)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Resepi Hasnah</td>
+            <td>Lot 1, Kafeteria Asrama Baharu</td>
+            <td>Hasnah binti Salleh</td>
+            <td class="text-center">0176668518</td>
+            <td class="text-center">11-116-100012-0</td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center">76</td>
+            <td class="text-center">135.00</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <ul>
-      {{#each users}}
+      <!-- {{#each users}}
       <li>Name: {{this.name}}</li>
       <li>Age: {{this.age}}</li>
       <br />
-      {{/each}}
+      {{/each}} -->
     </ul>
+
+    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/jspdf-autotable@3.6.0/dist/jspdf.plugin.autotable.js"></script>
+    <script src="/node_modules/html2canvas/dist/html2canvas.js"></script>
+    <script>
+      function genPDF() {
+        // const { jsPDF } = window.jspdf;
+        // var doc = new jsPDF();
+        // window.html2canvas = html2canvas;
+
+        // doc.html(document.querySelector("#pdf"), {
+        //   callback: function (doc) {
+        //     doc.save("test.pdf");
+        //   },
+        //   x: 10,
+        //   y: 10,
+        // });
+        var doc = new jspdf.jsPDF({ orientation: "l" });
+
+        // Simple html example
+        doc.addImage(
+          "/assets/logo_left.png",
+          "png",
+          14,
+          20,
+          42,
+          16,
+          "UniSZA",
+          "MEDIUM",
+          0
+        );
+        doc.setFontSize(14);
+        doc.text("eKupon@UniSZA Transactions (2023-06-11-2023-07-01)", 14, 46);
+        doc.autoTable({
+          html: "#tf",
+          startY: 56,
+          theme: "grid",
+          headStyles: {
+            styles: {
+              textColor: "black",
+              fillColor: [222, 222, 222],
+            },
+          },
+          footStyles: {
+            styles: {
+              textColor: "black",
+              fillColor: [252, 212, 4],
+            },
+          },
+          bodyStyles: {
+            styles: {
+              textColor: "black",
+              lineColor: "black",
+              fillColor: "white",
+            },
+          },
+        });
+
+        doc.save("table.pdf");
+      }
+    </script>
   </body>
 </html>
