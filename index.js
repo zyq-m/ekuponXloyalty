@@ -18,6 +18,8 @@ const { authenticateToken } = require("./src/middlewares/authenticateToken");
 const studentEvent = require("./src/services/socket.io/studentEvent");
 const cafeEvent = require("./src/services/socket.io/cafeEvent");
 const adminEvent = require("./src/services/socket.io/adminEvent");
+const connectionEvent = require("./src/services/socket.io/connectionEvent");
+const notificationEvent = require("./src/services/socket.io/notificationEvent");
 
 const app = express();
 const apiServer = http.createServer(app);
@@ -58,10 +60,9 @@ apiServer.listen(port, () => {
 
 // Socket io
 const onConnection = socket => {
-  console.log("ada org connect");
-  socket.on("test", msg => {
-    io.emit("test-res", msg);
-  });
+  connectionEvent(io, socket);
+
+  notificationEvent(io, socket);
 
   // STUDENT EVENTS
   studentEvent(io, socket);
