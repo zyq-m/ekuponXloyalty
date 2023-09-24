@@ -5,7 +5,7 @@ const {
 
 module.exports = (io, socket) => {
   // Get cafe's total sales & latest transaction
-  socket.on("cafe:sales", async payload => {
+  socket.on("cafe:get-sales-total", async payload => {
     const { cafeId } = payload;
 
     try {
@@ -16,9 +16,9 @@ module.exports = (io, socket) => {
         transactions: latestTransactions,
       };
 
-      io.emit("cafe:sales-total", res);
+      io.emit("cafe:get-sales-total", res);
     } catch (error) {
-      io.emit("cafe:sales-total", { error: error });
+      io.emit("cafe:get-sales-total", { error: error });
     }
   });
 };

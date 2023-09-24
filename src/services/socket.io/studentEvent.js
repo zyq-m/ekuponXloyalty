@@ -6,7 +6,7 @@ const {
 
 module.exports = (io, socket) => {
   // Get b40 student's wallet amount & transaction
-  socket.on("student:wallet", async payload => {
+  socket.on("student:get-wallet-total", async payload => {
     const { matricNo } = payload;
 
     try {
@@ -23,14 +23,14 @@ module.exports = (io, socket) => {
         transaction: latestTransactions,
       };
 
-      io.emit("student:wallet-total", res);
+      io.emit("student:get-wallet-total", res);
     } catch (error) {
-      io.emit("student:wallet-total", { error: error });
+      io.emit("student:get-wallet-total", { error: error });
     }
   });
 
   // Get student's point
-  socket.on("student:point", async payload => {
+  socket.on("student:get-point-total", async payload => {
     const { matricNo } = payload;
 
     try {
@@ -46,9 +46,9 @@ module.exports = (io, socket) => {
         transaction: latestTransactions,
       };
 
-      io.emit("student:point-total", res);
+      io.emit("student:get-point-total", res);
     } catch (error) {
-      io.emit("student:point-total", { error: error });
+      io.emit("student:get-point-total", { error: error });
     }
   });
 };

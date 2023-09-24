@@ -4,7 +4,7 @@ const transactionModel = require("../../models/transactionModel");
 
 module.exports = (io, socket) => {
   // Get overall student, cafe & transaction
-  socket.on("admin:overall", async () => {
+  socket.on("admin:get-overall", async () => {
     const student = studentModel.total();
     const cafe = cafeModel.total();
     const coupon = transactionModel.totalCoupon();
@@ -20,9 +20,9 @@ module.exports = (io, socket) => {
         point: data[3],
       };
 
-      io.emit("admin:overall-res", overall);
+      io.emit("admin:get-overall", overall);
     } catch (error) {
-      io.emit("admin:overall-res", { error: error });
+      io.emit("admin:get-overall", { error: error });
     }
   });
 };
