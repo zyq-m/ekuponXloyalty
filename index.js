@@ -4,6 +4,8 @@ const helmet = require("helmet");
 const xssClean = require("xss-clean");
 const hpp = require("hpp");
 const rateLimit = require("express-rate-limit");
+const http = require("http");
+const { Server } = require("socket.io");
 // Require routes
 const student = require("./src/routes/studentRoute");
 const cafe = require("./src/routes/cafeRoute");
@@ -12,9 +14,19 @@ const feedback = require("./src/routes/feedbackRoute");
 const auth = require("./src/routes/authRoute");
 // Require middleware
 const { authenticateToken } = require("./src/middlewares/authenticateToken");
+// Service
+const studentEvent = require("./src/services/socket.io/studentEvent");
+const cafeEvent = require("./src/services/socket.io/cafeEvent");
+const adminEvent = require("./src/services/socket.io/adminEvent");
 
 const app = express();
+const apiServer = http.createServer(app);
 const port = 3000;
+const io = new Server(apiServer, {
+  cors: {
+    origin: "*", // ! CHANGE THIS BEFORE PROD
+  },
+});
 
 app.use(helmet());
 app.use(hpp());
@@ -40,6 +52,25 @@ app.use("/api/cafe", cafe);
 app.use("/api/admin", admin);
 app.use("/api/feedback", feedback);
 
-app.listen(port, () => {
+apiServer.listen(port, () => {
   console.log(`listening on port ${port}`);
 });
+
+// Socket io
+const onConnection = socket => {
+  console.log("ada org connect");
+  socket.on("test", msg => {
+    io.emit("test-res", msg);
+  });
+
+  // STUDENT EVENTS
+  studentEvent(io, socket);
+
+  // CAFE EVENTS
+  cafeEvent(io, socket);
+
+  // ADMIN EVENTS
+  adminEvent(io, socket);
+};
+
+io.on("connection", onConnection);
