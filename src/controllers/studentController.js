@@ -57,8 +57,6 @@ exports.makePayment = async function (req, res) {
 };
 
 // Collect point
-// Student can scan one-time QR (token)
-// Student (ios) can input OTP
 exports.collectPoint = async function (req, res) {
   const { matricNo, cafeId, amount, pointId } = req.body;
 

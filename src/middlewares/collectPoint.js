@@ -1,6 +1,8 @@
 const { verifyPoint } = require("../services/jwt");
 const { verify } = require("../utils/otp");
 
+// Student can scan one-time QR (token)
+// Student (ios) can input OTP
 exports.verifyPoint = async (req, res, next) => {
   const { cafeId, token, otp } = req.body;
 
