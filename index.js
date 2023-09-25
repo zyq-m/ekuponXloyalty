@@ -20,6 +20,7 @@ const cafeEvent = require("./src/services/socket.io/cafeEvent");
 const adminEvent = require("./src/services/socket.io/adminEvent");
 const connectionEvent = require("./src/services/socket.io/connectionEvent");
 const notificationEvent = require("./src/services/socket.io/notificationEvent");
+const socketAuth = require("./src/services/socket.io/middlewares/socketAuth");
 
 const app = express();
 const apiServer = http.createServer(app);
@@ -54,24 +55,22 @@ app.use("/api/cafe", cafe);
 app.use("/api/admin", admin);
 app.use("/api/feedback", feedback);
 
-apiServer.listen(port, () => {
-  console.log(`listening on port ${port}`);
-});
-
 // Socket io
 const onConnection = socket => {
   connectionEvent(io, socket);
-
   notificationEvent(io, socket);
-
   // STUDENT EVENTS
   studentEvent(io, socket);
-
   // CAFE EVENTS
   cafeEvent(io, socket);
-
   // ADMIN EVENTS
   adminEvent(io, socket);
 };
 
+// Socket.io middleware
+io.use(socketAuth);
 io.on("connection", onConnection);
+
+apiServer.listen(port, () => {
+  console.log(`listening on port ${port}`);
+});
