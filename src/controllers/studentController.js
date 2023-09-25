@@ -81,42 +81,49 @@ exports.collectPoint = async function (req, res) {
   }
 };
 
-exports.getTransaction = async function (req, res) {
-  const { matricNo, b40 } = req.params;
+exports.getTransaction = function (wallet) {
+  return async function (req, res) {
+    const { matricNo } = req.params;
+    const options = wallet
+      ? { walletTransaction: true }
+      : { pointTransaction: true };
+    const transaction = await prisma.transaction.findMany({
+      where: {
+        matricNo: matricNo,
+      },
+      include: options,
+    });
 
-  const transaction = await prisma.transaction.findMany({
-    where: {
-      matricNo: matricNo,
-    },
-    include: {
-      walletTransaction: b40,
-      pointTransaction: !b40,
-    },
-  });
+    if (!transaction.length) {
+      return res.status(404).json({ message: "Not found" });
+    }
 
-  if (!transaction.length) {
-    return res.status(404).json({ message: "Not found" });
-  }
-
-  return res.status(200).json({ data: transaction });
+    return res.status(200).json({ data: transaction });
+  };
 };
 
 // Get transaction by date
-exports.getTransactionRange = async (req, res) => {
-  const { matricNo, from, to } = req.params;
-  const transaction = await prisma.transaction.findMany({
-    where: {
-      matricNo: matricNo,
-      createdAt: {
-        lte: from,
-        gte: to,
+exports.getTransactionRange = function (wallet) {
+  return async function (req, res) {
+    const { matricNo, from, to } = req.params;
+    const options = wallet
+      ? { walletTransaction: true }
+      : { pointTransaction: true };
+    const transaction = await prisma.transaction.findMany({
+      where: {
+        matricNo: matricNo,
+        createdAt: {
+          lte: from,
+          gte: to,
+        },
       },
-    },
-  });
+      include: options,
+    });
 
-  if (!transaction.length) {
-    return res.status(404).json({ message: "Not found" });
-  }
+    if (!transaction.length) {
+      return res.status(404).json({ message: "Not found" });
+    }
 
-  return res.status(200).json({ data: transaction });
+    return res.status(200).json({ data: transaction });
+  };
 };
