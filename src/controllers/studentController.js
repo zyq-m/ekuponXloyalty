@@ -58,7 +58,7 @@ exports.makePayment = async function (req, res) {
 
 // Collect point
 exports.collectPoint = async function (req, res) {
-  const { matricNo, cafeId, amount, pointId } = req.body;
+  const { matricNo, cafeId, amount, pointId, otp } = req.body;
 
   try {
     // Create new record
@@ -72,6 +72,29 @@ exports.collectPoint = async function (req, res) {
     if (!point) {
       return res.status(404).json({ message: "Invalid transaction" });
     }
+    // Store otp
+    const userId = await prisma.cafe.findUnique({
+      where: {
+        id: cafeId,
+      },
+      select: {
+        userId: true,
+      },
+    });
+    await prisma.userToken.upsert({
+      create: {
+        userId: userId.userId,
+        token: otp,
+        mark: "otp-token",
+      },
+      update: {
+        token: otp,
+      },
+      where: {
+        token: otp,
+        mark: "otp-token",
+      },
+    });
 
     return res.status(201).json({ data: point });
   } catch (error) {
