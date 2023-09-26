@@ -1,9 +1,11 @@
 const { PrismaClient } = require("@prisma/client");
 const { hash } = require("../utils/bcrypt");
+const { generateSecret } = require("../utils/otp");
 
 const prisma = new PrismaClient();
 
 exports.save = async options => {
+  const secret = generateSecret();
   return await prisma.cafe.create({
     data: {
       id: options.cafeId,
@@ -30,6 +32,7 @@ exports.save = async options => {
       sale: {
         create: {
           total: 0,
+          otp: secret,
         },
       },
     },

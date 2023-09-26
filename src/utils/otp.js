@@ -1,6 +1,11 @@
 const speakeasy = require("speakeasy");
+const bcrypt = require("../utils/bcrypt");
 
-const { base32: secret } = speakeasy.generateSecret({ length: 20 });
+function generateSecret() {
+  const { base32: secret } = speakeasy.generateSecret({ length: 20 });
+
+  return secret;
+}
 
 function generateToken(secret) {
   return speakeasy.totp({
@@ -20,7 +25,7 @@ function verify(token, secret) {
 }
 
 module.exports = {
-  secret,
+  generateSecret,
   generateToken,
   verify,
 };
