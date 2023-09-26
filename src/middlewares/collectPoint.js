@@ -1,3 +1,4 @@
+const { PrismaClient } = require("@prisma/client");
 const { verifyPoint } = require("../services/jwt");
 const { verify } = require("../utils/otp");
 
@@ -24,6 +25,7 @@ exports.verifyPoint = async (req, res, next) => {
 
   // Verify OTP if exists
   if (otp) {
+    const prisma = new PrismaClient();
     const secret = await prisma.sale.findUnique({
       select: {
         otp: true,
