@@ -22,7 +22,7 @@ main()
 
 async function initStudent() {
   let b40 = fake.b40;
-  return await prisma.student.create({
+  const config = {
     data: {
       matricNo: fake.matricNo,
       icNo: fake.icNo,
@@ -46,14 +46,29 @@ async function initStudent() {
           },
         },
       },
+    },
+  };
 
-      coupon: {
+  if (b40) {
+    (config.data.coupon = {
+      create: {
+        total: 0,
+      },
+    }),
+      (config.data.point = {
         create: {
           total: 0,
         },
+      });
+  } else {
+    config.data.point = {
+      create: {
+        total: 0,
       },
-    },
-  });
+    };
+  }
+
+  return await prisma.student.create(config);
 }
 
 async function initRole() {
@@ -92,7 +107,7 @@ async function initCafe() {
 }
 
 async function initPoint() {
-  return await prisma.point.createMany({
+  return await prisma.typePoint.createMany({
     data: [
       {
         name: "Point 1",
