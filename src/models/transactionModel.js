@@ -34,7 +34,7 @@ exports.createWalletTransaction = async (matricNo, cafeId, amount) => {
   });
   await prisma.coupon.update({
     data: {
-      total: prevCouponBalance.total - amount,
+      total: parseInt(prevCouponBalance.total) - parseInt(amount),
     },
     where: {
       matricNo: matricNo,
@@ -66,9 +66,10 @@ exports.createPointTransaction = async (matricNo, cafeId, amount, pointId) => {
     where: { matricNo: matricNo },
     select: { total: true },
   });
+  // console.log(prevCouponBalance.total);
   await prisma.point.update({
     data: {
-      total: prevCouponBalance.total + amount,
+      total: parseInt(prevCouponBalance.total) + parseInt(amount),
     },
     where: {
       matricNo: matricNo,
