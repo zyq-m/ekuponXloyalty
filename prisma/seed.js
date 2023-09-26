@@ -1,10 +1,11 @@
 const { PrismaClient } = require("@prisma/client");
 const fake = require("../src/utils/faker");
 const bcrypt = require("../src/utils/bcrypt");
+const cafeModel = require("../src/models/cafeModel");
 const prisma = new PrismaClient();
 
 async function main() {
-  const init = await initPoint();
+  const init = await initCafe();
 
   console.log(init);
 }
@@ -79,35 +80,14 @@ async function initRole() {
 }
 
 async function initCafe() {
-  return await prisma.cafe.create({
-    data: {
-      id: fake.cafeId,
-      name: fake.cafeName,
-      accountNo: fake.accountNo,
-
-      user: {
-        create: {
-          profile: {
-            create: {
-              name: fake.name,
-              phoneNo: fake.phoneNo,
-              address: fake.address,
-            },
-          },
-
-          password: bcrypt.hash("123"),
-          role: {
-            connect: { id: 4 },
-          },
-        },
-      },
-
-      sale: {
-        create: {
-          total: 0,
-        },
-      },
-    },
+  return await cafeModel.save({
+    cafeId: fake.cafeId,
+    cafeName: fake.cafeName,
+    accountNo: fake.accountNo,
+    name: fake.name,
+    phoneNo: fake.phoneNo,
+    address: fake.address,
+    password: "123",
   });
 }
 
