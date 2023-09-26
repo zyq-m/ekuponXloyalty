@@ -2,7 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const jwt = require("jsonwebtoken");
 
 const { generatePDF } = require("../utils/pdf/pdf");
-const { generateToken, secret } = require("../utils/otp");
+const { generateToken, verify } = require("../utils/otp");
 
 const prisma = new PrismaClient();
 
@@ -126,21 +126,28 @@ exports.getOTP = async (req, res) => {
   const { cafeId } = req.params;
   const id = await getCafeId(cafeId);
 
-  if (!id) {
+  if (!id.id) {
     return res.status(404).json({ message: "Not found" });
   }
 
   // Generate 6 digit number
   // Hash otp
   try {
-    const token = generateToken(secret);
-    // Store in table Sale
-    await prisma.sale.update({
-      data: {
-        otp: secret,
+    const token = generateToken(id.sale.otp);
+    // Store otp
+    await prisma.userToken.upsert({
+      create: {
+        token: token,
+        userId: id.userId,
+        mark: "otp-token",
+      },
+      update: {
+        token: token,
       },
       where: {
-        cafeId: cafeId,
+        token: token,
+        userId: id.userId,
+        mark: "otp-token",
       },
     });
 
@@ -172,7 +179,13 @@ async function getCafeId(cafeId) {
       id: cafeId,
     },
     select: {
+      userId: true,
       id: true,
+      sale: {
+        select: {
+          otp: true,
+        },
+      },
     },
   });
 }
