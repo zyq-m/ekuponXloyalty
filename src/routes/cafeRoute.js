@@ -16,9 +16,9 @@ router.get("/:cafeId", getCafe);
 
 // Get cafe QR
 router.get("/qr/ekupon/:cafeId", getEkuponURL);
-router.get("/qr/loyalty/:cafeId", getOTP(false));
+router.get("/qr/loyalty/:cafeId", getOTP(true));
 // Get one-time code
-router.get("/one-time/:cafeId", getOTP(true));
+router.get("/one-time/:cafeId", getOTP(false));
 
 // Transaction
 router.get("/transaction/:cafeId", getTransaction);
