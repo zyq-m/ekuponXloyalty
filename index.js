@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
 const helmet = require("helmet");
 const xssClean = require("xss-clean");
 const hpp = require("hpp");
@@ -25,12 +26,14 @@ const socketAuth = require("./src/services/socket.io/middlewares/socketAuth");
 const app = express();
 const apiServer = http.createServer(app);
 const port = 3000;
-const io = new Server(apiServer, {
-  cors: {
-    origin: "*", // ! CHANGE THIS BEFORE PROD
-  },
-});
+const isProduction = process.env.NODE_ENV === "production";
+const originConfig = {
+  origin: isProduction ? process.env.PROD_ORIGIN.split(" ") : "*",
+};
 
+const io = new Server(apiServer, { cors: originConfig });
+
+app.use(cors(originConfig));
 app.use(helmet());
 app.use(hpp());
 app.use(xssClean());
@@ -45,7 +48,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 app.get("/", (req, res) => {
-  res.send("hello world");
+  res.send({ message: "Hello Ekupon" });
 });
 
 app.use("/auth", auth);
