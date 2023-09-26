@@ -7,7 +7,6 @@ const {
   getTransactionRange,
   getTransaction,
   getEkuponURL,
-  getLoyaltyURL,
   getOTP,
 } = require("../controllers/cafeController");
 
@@ -17,9 +16,9 @@ router.get("/:cafeId", getCafe);
 
 // Get cafe QR
 router.get("/qr/ekupon/:cafeId", getEkuponURL);
-router.get("/qr/loyalty/:cafeId", getLoyaltyURL);
+router.get("/qr/loyalty/:cafeId", getOTP(false));
 // Get one-time code
-router.get("/one-time/:cafeId", getOTP);
+router.get("/one-time/:cafeId", getOTP(true));
 
 // Transaction
 router.get("/transaction/:cafeId", getTransaction);
