@@ -170,6 +170,7 @@ model Feedback {
 model UserToken {
   user      User     @relation(fields: [userId], references: [id])
   userId    String
-  token     String   @unique
+  token     String   @id
+  mark      String   @default("token")
   createdAt DateTime @default(now())
 }
