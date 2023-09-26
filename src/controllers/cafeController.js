@@ -100,29 +100,7 @@ exports.getEkuponURL = async (req, res) => {
   });
 };
 
-exports.getLoyaltyURL = async (req, res) => {
-  const { cafeId } = req.params;
-  const id = await getCafeId(cafeId);
-
-  if (!id) {
-    return res.status(404).json({ message: "Not Found" });
-  }
-
-  // Generate token
-  // Set expires to 1 min
-  const token = jwt.sign({ id: cafeId }, process.env.OTP_SECRET, {
-    expiresIn: "60s",
-  });
-  const url = `${generateUrl(cafeId)}&&token=${token}`;
-
-  return res.status(201).json({
-    data: {
-      url: url,
-    },
-  });
-};
-
-exports.getOTP = async (req, res) => {
+exports.getOTP = url => async (req, res) => {
   const { cafeId } = req.params;
   const id = await getCafeId(cafeId);
 
@@ -134,22 +112,11 @@ exports.getOTP = async (req, res) => {
   // Hash otp
   try {
     const token = generateToken(id.sale.otp);
-    // Store otp
-    await prisma.userToken.upsert({
-      create: {
-        token: token,
-        userId: id.userId,
-        mark: "otp-token",
-      },
-      update: {
-        token: token,
-      },
-      where: {
-        token: token,
-        userId: id.userId,
-        mark: "otp-token",
-      },
-    });
+
+    if (url) {
+      const loyaltyUrl = `${generateUrl(cafeId)}&&otp=${token}`;
+      return res.status(201).json({ data: { url: loyaltyUrl } });
+    }
 
     return res.status(200).json({ data: { otp: token } });
   } catch (error) {
@@ -179,7 +146,6 @@ async function getCafeId(cafeId) {
       id: cafeId,
     },
     select: {
-      userId: true,
       id: true,
       sale: {
         select: {
