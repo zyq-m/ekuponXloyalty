@@ -1,5 +1,4 @@
 const speakeasy = require("speakeasy");
-const bcrypt = require("../utils/bcrypt");
 
 function generateSecret() {
   const { base32: secret } = speakeasy.generateSecret({ length: 20 });
