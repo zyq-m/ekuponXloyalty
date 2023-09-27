@@ -93,8 +93,8 @@ npm run prisma-migrate
 #### Get request
 
 ```javascript
+// Get student info
 axios.get("/api/admin/student");
-
 // response
 {
   data: [
@@ -108,8 +108,8 @@ axios.get("/api/admin/student");
   ];
 }
 
+// Get cafe info
 axios.get("/api/admin/cafe");
-
 // response
 {
   data: [
@@ -123,8 +123,8 @@ axios.get("/api/admin/cafe");
   ];
 }
 
+// Get student transactions (coupon)
 axios.get("/api/admin/student/transactions");
-
 // response
 {
   data: [
@@ -145,8 +145,8 @@ axios.get("/api/admin/student/transactions");
   ];
 }
 
+// Get cafe transaction (coupon)
 axios.get("/api/admin/cafe/transactions");
-
 // response
 {
   data: [
@@ -171,7 +171,6 @@ axios.get("/api/admin/cafe/transactions");
 axios.get("/api/admin/student/points", {
     b40: true, // true or false
 });
-
 // response
 {
     "data": [
@@ -191,4 +190,74 @@ axios.get("/api/admin/student/points", {
     ...
     ]
 }
+```
+
+#### Post request
+
+```javascript
+// Varify cafe's transactions for claim
+// Coming soon...
+axios.post("/api/admin/cafe/claim", {
+  //
+});
+// response
+// coming soon...
+
+// Register student
+axios.post("/api/admin/user/register/student", {
+    matricNo, // string
+    icNo, // string
+    b40, //boolean
+    name, // string
+    phoneNo, // string
+    address, // string
+});
+// response
+{
+    data: {
+        // student data
+    },
+}
+
+// Register cafe
+axios.post("/api/admin/user/register/cafe", {
+    cafeId, // string
+    cafeName, // string
+    accountNo, //boolean
+    name, // string
+    phoneNo, // string
+    address, // string
+});
+// response
+{
+    data: {
+        // cafe data
+    },
+}
+
+// Register admin
+// Coming soon...
+```
+
+#### Put request
+
+```javascript
+// Suspend a user
+axios.put("/api/admin/user/suspend", {
+  id: // can be matric no or cafeId
+  active: false, // use 'true' to activate the user
+});
+// response
+{
+    data: {
+        // user data
+    },
+    message: "success"
+}
+
+// Update b40 wallet amount
+axios.put("/api/admin/student/wallet", {
+    matricNo, // string
+    amount, // int
+});
 ```
