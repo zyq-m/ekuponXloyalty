@@ -85,3 +85,110 @@ Make sure before migrate, stop your server to avoid error. Run the following com
 ```bash
 npm run prisma-migrate
 ```
+
+## Rest API Reference
+
+### Admin API
+
+#### Get request
+
+```javascript
+axios.get("/api/admin/student");
+
+// response
+{
+  data: [
+    {
+      matricNo: "482503",
+      icNo: "097883983187",
+      b40: true,
+      userId: "clmyiz00n0000vzhgqdh194ih",
+    },
+    ...
+  ];
+}
+
+axios.get("/api/admin/cafe");
+
+// response
+{
+  data: [
+    {
+      "id": "Nathanael24",
+      "name": "Cafe Armando",
+      "accountNo": "94005966",
+      "userId": "clmzqqxko0000vzucbb7hd8a5"
+    },
+    ...
+  ];
+}
+
+axios.get("/api/admin/student/transactions");
+
+// response
+{
+  data: [
+     {
+      "icNo": "699206388500",
+      "matricNo": "686098",
+      "transaction": [
+        {
+          "id": "clmztmcid0001vz001o9681ex",
+          "cafeId": "Nathanael24",
+          "matricNo": "686098",
+          "amount": "1",
+          "createdAt": "2023-09-26T04:32:05.054Z"
+        },
+        ...
+      ]
+    ...
+  ];
+}
+
+axios.get("/api/admin/cafe/transactions");
+
+// response
+{
+  data: [
+      {
+      "id": "Nathanael24",
+      "name": "Cafe Armando",
+      "transaction": [
+        {
+          "id": "clmztmcid0001vz001o9681ex",
+          "cafeId": "Nathanael24",
+          "matricNo": "686098",
+          "amount": "1",
+          "createdAt": "2023-09-26T04:32:05.054Z"
+        },
+        ...
+       ]
+    ...
+  ];
+}
+
+// Get point transactions
+axios.get("/api/admin/student/points", {
+    b40: true, // true or false
+});
+
+// response
+{
+    "data": [
+        {
+        "icNo": "699206388500",
+        "matricNo": "686098",
+        "transaction": [
+            {
+            "id": "clmztmcid0001vz001o9681ex",
+            "cafeId": "Nathanael24",
+            "matricNo": "686098",
+            "amount": "1",
+            "createdAt": "2023-09-26T04:32:05.054Z"
+            },
+            ...
+        }
+    ...
+    ]
+}
+```
