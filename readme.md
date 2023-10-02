@@ -94,7 +94,7 @@ npm run prisma-migrate
 
 ```javascript
 // Get student info
-axios.get("/api/admin/student");
+axios.get("/admin/student");
 // response
 {
   data: [
@@ -109,7 +109,7 @@ axios.get("/api/admin/student");
 }
 
 // Get cafe info
-axios.get("/api/admin/cafe");
+axios.get("/admin/cafe");
 // response
 {
   data: [
@@ -124,7 +124,7 @@ axios.get("/api/admin/cafe");
 }
 
 // Get student transactions (coupon)
-axios.get("/api/admin/student/transactions");
+axios.get("/admin/student/transactions");
 // response
 {
   data: [
@@ -146,7 +146,7 @@ axios.get("/api/admin/student/transactions");
 }
 
 // Get cafe transaction (coupon)
-axios.get("/api/admin/cafe/transactions");
+axios.get("/admin/cafe/transactions");
 // response
 {
   data: [
@@ -168,7 +168,7 @@ axios.get("/api/admin/cafe/transactions");
 }
 
 // Get point transactions
-axios.get("/api/admin/student/points", {
+axios.get("/admin/student/points", {
     b40: true, // true or false
 });
 // response
@@ -197,14 +197,14 @@ axios.get("/api/admin/student/points", {
 ```javascript
 // Varify cafe's transactions for claim
 // Coming soon...
-axios.post("/api/admin/cafe/claim", {
+axios.post("/admin/cafe/claim", {
   //
 });
 // response
 // coming soon...
 
 // Register student
-axios.post("/api/admin/user/register/student", {
+axios.post("/admin/user/register/student", {
     matricNo, // string
     icNo, // string
     b40, //boolean
@@ -220,7 +220,7 @@ axios.post("/api/admin/user/register/student", {
 }
 
 // Register cafe
-axios.post("/api/admin/user/register/cafe", {
+axios.post("/admin/user/register/cafe", {
     cafeId, // string
     cafeName, // string
     accountNo, //boolean
@@ -243,7 +243,7 @@ axios.post("/api/admin/user/register/cafe", {
 
 ```javascript
 // Suspend a user
-axios.put("/api/admin/user/suspend", {
+axios.put("/admin/user/suspend", {
   id: // can be matric no or cafeId
   active: false, // use 'true' to activate the user
 });
@@ -256,7 +256,7 @@ axios.put("/api/admin/user/suspend", {
 }
 
 // Update b40 wallet amount
-axios.put("/api/admin/student/wallet", {
+axios.put("/admin/student/wallet", {
     matricNo, // string
     amount, // int
 });
@@ -268,7 +268,7 @@ axios.put("/api/admin/student/wallet", {
 
 ```javascript
 // Get student by matric no
-axios.get("/api/student/123456)
+axios.get("/student/123456)
 // response
 // {
 //     "data": {
@@ -287,9 +287,9 @@ axios.get("/api/student/123456)
 // }
 
 // Get wallet (coupon) transaction
-axios.get('/api/student/transaction/wallet/123456')
+axios.get('/student/transaction/wallet/123456')
 // Get wallet (coupon) transaction by date
-axios.get('/api/student/transaction/wallet/from/to/123456')
+axios.get('/student/transaction/wallet/from/to/123456')
 
 // response
 // {
@@ -310,9 +310,9 @@ axios.get('/api/student/transaction/wallet/from/to/123456')
 //         },
 
 // Get point transaction
-axios.get('/api/student/transaction/point/123456')
+axios.get('/student/transaction/point/123456')
 // Get point transaction by date
-axios.get('/api/student/transaction/point/from/to/123456')
+axios.get('/student/transaction/point/from/to/123456')
 // response
 // {
 //     "data": [
@@ -336,7 +336,7 @@ axios.get('/api/student/transaction/point/from/to/123456')
 
 ```javascript
 // Pay (coupon)
-axios.get("/api/student/pay", {
+axios.get("/student/pay", {
   matricNo: string,
   cafeId: string,
   amount: int,
@@ -351,7 +351,7 @@ axios.get("/api/student/pay", {
 // }
 
 // Collect points
-axios.get("/api/student/pay", {
+axios.get("/student/pay", {
   matricNo: string,
   cafeId: string,
   amount: int,
@@ -373,7 +373,7 @@ axios.get("/api/student/pay", {
 
 ```javascript
 // Get url for ekupon
-axios.get("/api/cafe/qr/ekupon/cafe1");
+axios.get("/cafe/qr/ekupon/cafe1");
 // response
 // {
 //     "data": {
@@ -382,7 +382,7 @@ axios.get("/api/cafe/qr/ekupon/cafe1");
 // }
 
 // Get url for point
-axios.get("/api/cafe/qr/loyalty/cafe1");
+axios.get("/cafe/qr/loyalty/cafe1");
 // response
 // {
 //     "data": {
@@ -391,7 +391,7 @@ axios.get("/api/cafe/qr/loyalty/cafe1");
 // }
 
 // Get url for point
-axios.get("/api/cafe/one-time/cafe1");
+axios.get("/cafe/one-time/cafe1");
 // response
 // {
 //     "data": {
@@ -400,7 +400,7 @@ axios.get("/api/cafe/one-time/cafe1");
 // }
 
 // Get transactions
-axios.get("/api/cafe/transaction/cafe1");
+axios.get("/cafe/transaction/cafe1");
 // response
 // {
 //   "data": [
@@ -413,7 +413,7 @@ axios.get("/api/cafe/transaction/cafe1");
 //       },
 
 // Get transaction by date
-axios.get("/api/cafe/transaction/from/to/cafe1");
+axios.get("/cafe/transaction/from/to/cafe1");
 // response
 // {
 //   "data": [
@@ -426,9 +426,38 @@ axios.get("/api/cafe/transaction/from/to/cafe1");
 //       },
 
 // Get transaction by date in pdf format
-axios.get("/api/cafe/transaction/from/to/cafe1");
+axios.get("/cafe/transaction/from/to/cafe1");
 // response
 // download pdf
+```
+
+### Feedback API
+
+#### GET
+
+```javascript
+// Get feedback
+axios.get("/feedback");
+// response
+// {
+//     "data": [
+//       {
+//         "id": string
+//         "userId": string
+//         "description": string
+//       }
+//     ]
+// }
+```
+
+### POST
+
+```javascript
+axios.get("/feedback", {
+  id: string, // can be matric no, cafe id
+  description: string,
+});
+// response with 201 status code
 ```
 
 ### Websocket Events
