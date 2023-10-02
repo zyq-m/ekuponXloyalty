@@ -19,11 +19,6 @@ exports.getStudent = async function (req, res) {
           profile: true,
         },
       },
-      coupon: {
-        select: {
-          total: true,
-        },
-      },
     },
   });
 
@@ -116,7 +111,10 @@ exports.getTransaction = function (wallet) {
       include: options,
     });
 
-    if (!transaction.length) {
+    const isExist = wallet
+      ? transaction[0].walletTransaction
+      : transaction[0].pointTransaction;
+    if (!isExist.length) {
       return res.status(404).json({ message: "Not found" });
     }
 
@@ -135,8 +133,8 @@ exports.getTransactionRange = function (wallet) {
       where: {
         matricNo: matricNo,
         createdAt: {
-          lte: from,
-          gte: to,
+          lte: new Date(from),
+          gte: new Date(to),
         },
       },
       include: options,
