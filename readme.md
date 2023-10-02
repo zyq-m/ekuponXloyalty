@@ -261,3 +261,122 @@ axios.put("/api/admin/student/wallet", {
     amount, // int
 });
 ```
+
+### Student API
+
+#### GET
+
+```javascript
+// Get student by matric no
+axios.get("/api/student/123456)
+// response
+// {
+//     "data": {
+//         "matricNo": string,
+//         "icNo": string,
+//         "user": {
+//             "profile": {
+//                 "id": string,
+//                 "name": string,
+//                 "phoneNo": string,
+//                 "address": string,
+//                 "userId": string
+//             }
+//         },
+//     }
+// }
+
+// Get wallet (coupon) transaction
+axios.get('/api/student/transaction/wallet/123456')
+// Get wallet (coupon) transaction by date
+axios.get('/api/student/transaction/wallet/from/to/123456')
+
+// response
+// {
+//     "data": [
+//         {
+//             "id": "clmztmcid0001vz001o9681ex",
+//             "cafeId": "Nathanael24",
+//             "matricNo": "686098",
+//             "amount": "1",
+//             "createdAt": "2023-09-26T04:32:05.054Z",
+//             "walletTransaction": [
+//                 {
+//                     "id": "clmztmciv0003vz00psu3vimg",
+//                     "transactionId": "clmztmcid0001vz001o9681ex",
+//                     "pointId": 1
+//                 }
+//             ]
+//         },
+
+// Get point transaction
+axios.get('/api/student/transaction/point/123456')
+// Get point transaction by date
+axios.get('/api/student/transaction/point/from/to/123456')
+// response
+// {
+//     "data": [
+//         {
+//             "id": "clmztmcid0001vz001o9681ex",
+//             "cafeId": "Nathanael24",
+//             "matricNo": "686098",
+//             "amount": "1",
+//             "createdAt": "2023-09-26T04:32:05.054Z",
+//             "walletTransaction": [
+//                 {
+//                     "id": "clmztmciv0003vz00psu3vimg",
+//                     "transactionId": "clmztmcid0001vz001o9681ex",
+//                     "pointId": 1
+//                 }
+//             ]
+//         },
+```
+
+#### POST
+
+```javascript
+// Pay (coupon)
+axios.get("/api/student/pay", {
+  matricNo: string,
+  cafeId: string,
+  amount: int,
+});
+// response
+// {
+//   data: {
+//     id: string;
+//     transactionId: string;
+//     approved: boolean;
+//   }
+// }
+
+// Collect points
+axios.get("/api/student/pay", {
+  matricNo: string,
+  cafeId: string,
+  amount: int,
+  pointId: int,
+});
+// response
+// {
+//   data: {
+//     id: string;
+//     transactionId: string;
+//     pointId: number;
+//   }
+// }
+```
+
+### Websocket Events
+
+```javascript
+io.on("admin:get-overall", data => {
+  // data response
+  // {
+  //   student: 4,
+  //   cafe: 5,
+  //   coupon: 5,
+  //   point: 10,
+  // }
+});
+```
