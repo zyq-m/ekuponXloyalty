@@ -128,7 +128,7 @@ axios.get("/admin/student/transactions");
 // response
 {
   data: [
-     {
+    {
       "icNo": "699206388500",
       "matricNo": "686098",
       "transaction": [
@@ -140,8 +140,8 @@ axios.get("/admin/student/transactions");
           "createdAt": "2023-09-26T04:32:05.054Z"
         },
         ...
-      ]
-    ...
+    ]
+  ...
   ];
 }
 
@@ -150,19 +150,19 @@ axios.get("/admin/cafe/transactions");
 // response
 {
   data: [
+    {
+    "id": "Nathanael24",
+    "name": "Cafe Armando",
+    "transaction": [
       {
-      "id": "Nathanael24",
-      "name": "Cafe Armando",
-      "transaction": [
-        {
-          "id": "clmztmcid0001vz001o9681ex",
-          "cafeId": "Nathanael24",
-          "matricNo": "686098",
-          "amount": "1",
-          "createdAt": "2023-09-26T04:32:05.054Z"
-        },
-        ...
-       ]
+        "id": "clmztmcid0001vz001o9681ex",
+        "cafeId": "Nathanael24",
+        "matricNo": "686098",
+        "amount": "1",
+        "createdAt": "2023-09-26T04:32:05.054Z"
+      },
+      ...
+      ]
     ...
   ];
 }
@@ -173,22 +173,22 @@ axios.get("/admin/student/points", {
 });
 // response
 {
-    "data": [
-        {
-        "icNo": "699206388500",
+  "data": [
+    {
+    "icNo": "699206388500",
+    "matricNo": "686098",
+    "transaction": [
+      {
+        "id": "clmztmcid0001vz001o9681ex",
+        "cafeId": "Nathanael24",
         "matricNo": "686098",
-        "transaction": [
-            {
-            "id": "clmztmcid0001vz001o9681ex",
-            "cafeId": "Nathanael24",
-            "matricNo": "686098",
-            "amount": "1",
-            "createdAt": "2023-09-26T04:32:05.054Z"
-            },
-            ...
-        }
-    ...
-    ]
+        "amount": "1",
+        "createdAt": "2023-09-26T04:32:05.054Z"
+      },
+        ...
+    }
+  ...
+  ]
 }
 ```
 
@@ -214,9 +214,9 @@ axios.post("/admin/user/register/student", {
 });
 // response
 {
-    data: {
-        // student data
-    },
+  data: {
+    // student data
+  },
 }
 
 // Register cafe
@@ -230,9 +230,9 @@ axios.post("/admin/user/register/cafe", {
 });
 // response
 {
-    data: {
-        // cafe data
-    },
+  data: {
+    // cafe data
+  },
 }
 
 // Register admin
@@ -249,10 +249,10 @@ axios.put("/admin/user/suspend", {
 });
 // response
 {
-    data: {
-        // user data
-    },
-    message: "success"
+  data: {
+    // user data
+  },
+  message: "success"
 }
 
 // Update b40 wallet amount
@@ -270,21 +270,21 @@ axios.put("/admin/student/wallet", {
 // Get student by matric no
 axios.get("/student/123456)
 // response
-// {
-//     "data": {
-//         "matricNo": string,
-//         "icNo": string,
-//         "user": {
-//             "profile": {
-//                 "id": string,
-//                 "name": string,
-//                 "phoneNo": string,
-//                 "address": string,
-//                 "userId": string
-//             }
-//         },
-//     }
-// }
+{
+  "data": {
+    "matricNo": string,
+    "icNo": string,
+    "user": {
+      "profile": {
+          "id": string,
+          "name": string,
+          "phoneNo": string,
+          "address": string,
+          "userId": string
+      }
+    },
+  }
+}
 
 // Get wallet (coupon) transaction
 axios.get('/student/transaction/wallet/123456')
@@ -292,44 +292,44 @@ axios.get('/student/transaction/wallet/123456')
 axios.get('/student/transaction/wallet/from/to/123456')
 
 // response
-// {
-//     "data": [
-//         {
-//             "id": "clmztmcid0001vz001o9681ex",
-//             "cafeId": "Nathanael24",
-//             "matricNo": "686098",
-//             "amount": "1",
-//             "createdAt": "2023-09-26T04:32:05.054Z",
-//             "walletTransaction": [
-//                 {
-//                     "id": "clmztmciv0003vz00psu3vimg",
-//                     "transactionId": "clmztmcid0001vz001o9681ex",
-//                     "pointId": 1
-//                 }
-//             ]
-//         },
+{
+  "data": [
+    {
+      "id": "clmztmcid0001vz001o9681ex",
+      "cafeId": "Nathanael24",
+      "matricNo": "686098",
+      "amount": "1",
+      "createdAt": "2023-09-26T04:32:05.054Z",
+      "walletTransaction": [
+        {
+          "id": "clmztmciv0003vz00psu3vimg",
+          "transactionId": "clmztmcid0001vz001o9681ex",
+          "pointId": 1
+        }
+      ]
+    },
 
 // Get point transaction
 axios.get('/student/transaction/point/123456')
 // Get point transaction by date
 axios.get('/student/transaction/point/from/to/123456')
 // response
-// {
-//     "data": [
-//         {
-//             "id": "clmztmcid0001vz001o9681ex",
-//             "cafeId": "Nathanael24",
-//             "matricNo": "686098",
-//             "amount": "1",
-//             "createdAt": "2023-09-26T04:32:05.054Z",
-//             "walletTransaction": [
-//                 {
-//                     "id": "clmztmciv0003vz00psu3vimg",
-//                     "transactionId": "clmztmcid0001vz001o9681ex",
-//                     "pointId": 1
-//                 }
-//             ]
-//         },
+{
+  "data": [
+    {
+      "id": "clmztmcid0001vz001o9681ex",
+      "cafeId": "Nathanael24",
+      "matricNo": "686098",
+      "amount": "1",
+      "createdAt": "2023-09-26T04:32:05.054Z",
+      "walletTransaction": [
+        {
+          "id": "clmztmciv0003vz00psu3vimg",
+          "transactionId": "clmztmcid0001vz001o9681ex",
+          "pointId": 1
+        }
+      ]
+    },
 ```
 
 #### POST
@@ -342,13 +342,13 @@ axios.get("/student/pay", {
   amount: int,
 });
 // response
-// {
-//   data: {
-//     id: string;
-//     transactionId: string;
-//     approved: boolean;
-//   }
-// }
+{
+  data: {
+    id: string;
+    transactionId: string;
+    approved: boolean;
+  }
+}
 
 // Collect points
 axios.get("/student/pay", {
@@ -358,13 +358,13 @@ axios.get("/student/pay", {
   pointId: int,
 });
 // response
-// {
-//   data: {
-//     id: string;
-//     transactionId: string;
-//     pointId: number;
-//   }
-// }
+{
+  data: {
+    id: string;
+    transactionId: string;
+    pointId: number;
+  }
+}
 ```
 
 ### Cafe API
@@ -375,55 +375,55 @@ axios.get("/student/pay", {
 // Get url for ekupon
 axios.get("/cafe/qr/ekupon/cafe1");
 // response
-// {
-//     "data": {
-//         "url": url
-//     }
-// }
+{
+    "data": {
+        "url": url
+    }
+}
 
 // Get url for point
 axios.get("/cafe/qr/loyalty/cafe1");
 // response
-// {
-//     "data": {
-//         "url": url
-//     }
-// }
+{
+    "data": {
+        "url": url
+    }
+}
 
 // Get url for point
 axios.get("/cafe/one-time/cafe1");
 // response
-// {
-//     "data": {
-//         "otp": string
-//     }
-// }
+{
+    "data": {
+        "otp": string
+    }
+}
 
 // Get transactions
 axios.get("/cafe/transaction/cafe1");
 // response
-// {
-//   "data": [
-//       {
-//           "id": "cln8etgwy0001vz5s8fui32e3",
-//           "cafeId": "Sage.Weimann",
-//           "matricNo": "482503",
-//           "amount": "1",
-//           "createdAt": "2023-10-02T04:47:38.700Z"
-//       },
+{
+  "data": [
+      {
+          "id": "cln8etgwy0001vz5s8fui32e3",
+          "cafeId": "Sage.Weimann",
+          "matricNo": "482503",
+          "amount": "1",
+          "createdAt": "2023-10-02T04:47:38.700Z"
+      },
 
 // Get transaction by date
 axios.get("/cafe/transaction/from/to/cafe1");
 // response
-// {
-//   "data": [
-//       {
-//           "id": "cln8etgwy0001vz5s8fui32e3",
-//           "cafeId": "Sage.Weimann",
-//           "matricNo": "482503",
-//           "amount": "1",
-//           "createdAt": "2023-10-02T04:47:38.700Z"
-//       },
+{
+  "data": [
+      {
+          "id": "cln8etgwy0001vz5s8fui32e3",
+          "cafeId": "Sage.Weimann",
+          "matricNo": "482503",
+          "amount": "1",
+          "createdAt": "2023-10-02T04:47:38.700Z"
+      },
 
 // Get transaction by date in pdf format
 axios.get("/cafe/transaction/from/to/cafe1");
@@ -439,18 +439,18 @@ axios.get("/cafe/transaction/from/to/cafe1");
 // Get feedback
 axios.get("/feedback");
 // response
-// {
-//     "data": [
-//       {
-//         "id": string
-//         "userId": string
-//         "description": string
-//       }
-//     ]
-// }
+{
+    "data": [
+      {
+        "id": string
+        "userId": string
+        "description": string
+      }
+    ]
+}
 ```
 
-### POST
+#### POST
 
 ```javascript
 axios.get("/feedback", {
