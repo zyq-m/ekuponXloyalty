@@ -367,6 +367,70 @@ axios.get("/api/student/pay", {
 // }
 ```
 
+### Cafe API
+
+#### GET
+
+```javascript
+// Get url for ekupon
+axios.get("/api/cafe/qr/ekupon/cafe1");
+// response
+// {
+//     "data": {
+//         "url": url
+//     }
+// }
+
+// Get url for point
+axios.get("/api/cafe/qr/loyalty/cafe1");
+// response
+// {
+//     "data": {
+//         "url": url
+//     }
+// }
+
+// Get url for point
+axios.get("/api/cafe/one-time/cafe1");
+// response
+// {
+//     "data": {
+//         "otp": string
+//     }
+// }
+
+// Get transactions
+axios.get("/api/cafe/transaction/cafe1");
+// response
+// {
+//   "data": [
+//       {
+//           "id": "cln8etgwy0001vz5s8fui32e3",
+//           "cafeId": "Sage.Weimann",
+//           "matricNo": "482503",
+//           "amount": "1",
+//           "createdAt": "2023-10-02T04:47:38.700Z"
+//       },
+
+// Get transaction by date
+axios.get("/api/cafe/transaction/from/to/cafe1");
+// response
+// {
+//   "data": [
+//       {
+//           "id": "cln8etgwy0001vz5s8fui32e3",
+//           "cafeId": "Sage.Weimann",
+//           "matricNo": "482503",
+//           "amount": "1",
+//           "createdAt": "2023-10-02T04:47:38.700Z"
+//       },
+
+// Get transaction by date in pdf format
+axios.get("/api/cafe/transaction/from/to/cafe1");
+// response
+// download pdf
+```
+
 ### Websocket Events
 
 ```javascript
