@@ -46,6 +46,7 @@ exports.logout = async (req, res) => {
 
     return res.sendStatus(204);
   } catch (error) {
+    console.log(error);
     return res.status(500).send({ error: error });
   }
 };
