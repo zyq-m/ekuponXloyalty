@@ -53,10 +53,10 @@ app.get("/", (req, res) => {
 
 app.use("/auth", auth);
 app.use(authenticateToken); // Every incomming request it will validate token
-app.use("/api/student", student);
-app.use("/api/cafe", cafe);
-app.use("/api/admin", admin);
-app.use("/api/feedback", feedback);
+app.use("/student", student);
+app.use("/cafe", cafe);
+app.use("/admin", admin);
+app.use("/feedback", feedback);
 
 // Socket io
 const onConnection = socket => {
