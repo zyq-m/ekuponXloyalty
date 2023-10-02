@@ -121,3 +121,17 @@ async function initPoint() {
     ],
   });
 }
+
+async function initAdmin() {
+  return await prisma.user.create({
+    data: {
+      admin: {
+        create: {
+          email: "admin123@gmail.com",
+        },
+      },
+      password: bcrypt.hash("admin123"),
+      roleId: 3,
+    },
+  });
+}
