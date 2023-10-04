@@ -120,3 +120,33 @@ exports.suspendUser = async (req, res) => {
     return res.status(404).send({ error: "User not found" });
   }
 };
+
+exports.getReport = pdf => async (req, res) => {
+  const { from, to } = req.params;
+  BigInt.prototype.toJSON = function () {
+    const int = Number.parseInt(this.toString());
+    return int ?? this.toString();
+  };
+
+  try {
+    const report =
+      await prisma.$queryRaw`select c.id, c.name, c."accountNo", count(c.id) "totalTransaction", sum(t.amount) 
+      from "TWallet" w 
+      inner join "Transaction" t on w."transactionId" = t.id 
+      inner join "Cafe" c on c.id = t."cafeId" 
+      where w.approved = false and t."createdAt" >= ${new Date(from)}
+      and "createdAt" < ${new Date(to)}
+      group by c.id`;
+
+    // ! this query need refactor
+
+    if (pdf) {
+      res.status(200).send("pdf");
+    } else {
+      res.status(200).send({ data: report });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ error: error });
+  }
+};
