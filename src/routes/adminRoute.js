@@ -30,4 +30,11 @@ router.post("/user/register/student", adminController.registerStudent);
 router.post("/user/register/cafe", adminController.registerCafe);
 router.post("/user/register/admin");
 
+// Transaction
+router.get("/report/transaction/:from/:to", adminController.getReport(false));
+router.get(
+  "/report/transaction/pdf/:from/:to",
+  adminController.getReport(true)
+);
+
 module.exports = router;
