@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 const refreshTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+const oneTimeUrlSecret = process.env.OTP_SECRET;
 
 exports.generateAccessToken = user => {
   const payload = { id: user.id, role: user.roleId };
@@ -25,4 +26,9 @@ exports.verifyAccessToken = token => {
 
 exports.verifyRefreshToken = token => {
   return jwt.verify(token, refreshTokenSecret);
+};
+
+// Verify token (one-time-URL)
+exports.verifyPoint = token => {
+  return jwt.verify(token, oneTimeUrlSecret);
 };

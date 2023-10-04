@@ -1,7 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const studentModel = require("../models/studentModel");
 const cafeModel = require("../models/cafeModel");
-const transactionModel = require("../models/transactionModel");
 
 const prisma = new PrismaClient();
 
@@ -119,28 +118,5 @@ exports.suspendUser = async (req, res) => {
     return res.status(200).send({ data: user, message: "success" });
   } catch (error) {
     return res.status(404).send({ error: "User not found" });
-  }
-};
-
-// Get overall student, cafe & transaction
-exports.getOverall = async (req, res) => {
-  const student = studentModel.total();
-  const cafe = cafeModel.total();
-  const coupon = transactionModel.totalCoupon();
-  const point = transactionModel.totalPoint();
-  const arrReq = [student, cafe, coupon, point];
-
-  try {
-    const data = await Promise.all(arrReq);
-    const overall = {
-      student: data[0],
-      cafe: data[1],
-      coupon: data[2],
-      point: data[3],
-    };
-
-    return res.status(200).send(overall);
-  } catch (error) {
-    return res.status(500).send({ error: error });
   }
 };

@@ -7,7 +7,7 @@ exports.checkBalance = async (req, res, next) => {
 
   const transactionToday = await prisma.transaction.aggregate({
     _sum: {
-      matricNo: true,
+      amount: true,
     },
     where: {
       matricNo: matricNo,
@@ -24,9 +24,12 @@ exports.checkBalance = async (req, res, next) => {
   const spend = transactionToday._sum.amount + amount;
 
   if (spend <= 6) {
+    console.log(transactionToday._sum.amount);
     next();
+  } else {
+    // When spend exceeds 6, reject requests
+    return res
+      .status(406)
+      .json({ message: "You have reach the limit of spend" });
   }
-
-  // When spend exceeds 6, reject requests
-  return res.status(406).json({ message: "You have reach the limit of spend" });
 };

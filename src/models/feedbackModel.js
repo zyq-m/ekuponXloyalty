@@ -13,3 +13,7 @@ exports.save = async (id, description) => {
     },
   });
 };
+
+exports.getAll = async () => {
+  return await prisma.feedback.findMany();
+};

@@ -10,15 +10,15 @@ exports.findId = async id => {
 
   const userId = await Promise.allSettled([student, cafe, admin]);
 
-  if (userId[0]) {
+  if (userId[0].value?.userId) {
     return userId[0];
   }
 
-  if (userId[1]) {
+  if (userId[1].value?.userId) {
     return userId[1];
   }
 
-  if (userId[2]) {
+  if (userId[2].value?.userId) {
     return userId[2];
   }
 

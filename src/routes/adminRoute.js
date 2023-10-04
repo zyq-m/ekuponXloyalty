@@ -10,8 +10,6 @@ router.get("/student", adminController.getStudent);
 // Get all cafe
 router.get("/cafe", adminController.getCafe);
 
-// Get overall student, cafe & transaction
-router.get("/overall", adminController.getOverall);
 // Get cafe & student transactions
 router.get("/student/transactions", adminController.getTransactionStudent);
 router.get("/cafe/transactions", adminController.getTransactionCafe);

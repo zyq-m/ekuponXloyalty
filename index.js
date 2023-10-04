@@ -1,9 +1,12 @@
 require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
 const helmet = require("helmet");
 const xssClean = require("xss-clean");
 const hpp = require("hpp");
 const rateLimit = require("express-rate-limit");
+const http = require("http");
+const { Server } = require("socket.io");
 // Require routes
 const student = require("./src/routes/studentRoute");
 const cafe = require("./src/routes/cafeRoute");
@@ -12,10 +15,25 @@ const feedback = require("./src/routes/feedbackRoute");
 const auth = require("./src/routes/authRoute");
 // Require middleware
 const { authenticateToken } = require("./src/middlewares/authenticateToken");
+// Service
+const studentEvent = require("./src/services/socket.io/studentEvent");
+const cafeEvent = require("./src/services/socket.io/cafeEvent");
+const adminEvent = require("./src/services/socket.io/adminEvent");
+const connectionEvent = require("./src/services/socket.io/connectionEvent");
+const notificationEvent = require("./src/services/socket.io/notificationEvent");
+const socketAuth = require("./src/services/socket.io/middlewares/socketAuth");
 
 const app = express();
+const apiServer = http.createServer(app);
 const port = 3000;
+const isProduction = process.env.NODE_ENV === "production";
+const originConfig = {
+  origin: isProduction ? process.env.PROD_ORIGIN.split(" ") : "*",
+};
 
+const io = new Server(apiServer, { cors: originConfig });
+
+app.use(cors(originConfig));
 app.use(helmet());
 app.use(hpp());
 app.use(xssClean());
@@ -30,17 +48,33 @@ const limiter = rateLimit({
 app.use(limiter);
 
 app.get("/", (req, res) => {
-  res.send("hello world");
+  res.send({ message: "Hello Ekupon" });
 });
 
 app.use("/auth", auth);
 app.use(authenticateToken); // Every incomming request it will validate token
-app.use("/api/student", student);
-app.use("/api/cafe", cafe);
-app.use("/api/admin", admin);
-app.use("/api/feedback", feedback);
+app.use("/student", student);
+app.use("/cafe", cafe);
+app.use("/admin", admin);
+app.use("/feedback", feedback);
 
-app.listen(port, () => {
+// Socket io
+const onConnection = socket => {
+  connectionEvent(io, socket);
+  notificationEvent(io, socket);
+  // STUDENT EVENTS
+  studentEvent(io, socket);
+  // CAFE EVENTS
+  cafeEvent(io, socket);
+  // ADMIN EVENTS
+  adminEvent(io, socket);
+};
+
+// Socket.io middleware
+io.use(socketAuth);
+io.on("connection", onConnection);
+
+apiServer.listen(port, () => {
   console.log(`listening on port ${port}`);
 });
 
