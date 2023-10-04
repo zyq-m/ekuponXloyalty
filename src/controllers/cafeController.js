@@ -132,8 +132,8 @@ async function transactionOnDate(cafeId, from, to) {
     where: {
       cafeId: cafeId,
       createdAt: {
-        lte: from,
-        gte: to,
+        gte: new Date(from),
+        lte: new Date(to),
       },
     },
   });
