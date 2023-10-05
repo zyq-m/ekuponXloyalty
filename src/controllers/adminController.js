@@ -129,19 +129,21 @@ exports.getReport = pdf => async (req, res) => {
   };
 
   try {
-    const report =
-      await prisma.$queryRaw`select c.id, c.name, c."accountNo", count(c.id) "totalTransaction", sum(t.amount) 
-      from "TWallet" w 
+    const report = await prisma.$queryRaw`
+      select c.id, p.name, c.name "cafeName", p.address, p."phoneNo", c."accountNo", count(c.id) "totalTransaction", sum(t.amount) amount
+      from "TWallet" w
       inner join "Transaction" t on w."transactionId" = t.id 
-      inner join "Cafe" c on c.id = t."cafeId" 
+      inner join "Cafe" c on c.id = t."cafeId"
+      inner join "Profile" p on p."userId" = c."userId"
       where w.approved = false and t."createdAt" >= ${new Date(from)}
-      and "createdAt" < ${new Date(to)}
-      group by c.id`;
+      -- and "createdAt" < ${new Date(to)}
+      group by c.id, p.address, p."phoneNo", p.name`;
 
     // ! this query need refactor
 
     if (pdf) {
-      res.status(200).send("pdf");
+      res.header("Content-Security-Policy", "img-src 'self'");
+      res.render("admin/transaction", { transaction: report });
     } else {
       res.status(200).send({ data: report });
     }
