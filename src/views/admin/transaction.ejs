@@ -39,10 +39,15 @@
       .text-center {
         text-align: center;
       }
+
+      .btn-wrap {
+        display: grid;
+        place-items: center;
+        margin-top: 1rem;
+      }
     </style>
   </head>
   <body>
-    <button type="button" onclick="genPDF()">Generate</button>
     <div id="pdf">
       <img
         src="http://localhost:3000/public/assets/logo_left.png"
@@ -63,9 +68,9 @@
           </tr>
         </thead>
         <tbody>
-          <% transaction.forEach(tf=> { %>
+          <% transaction.forEach((tf, i)=> { %>
           <tr>
-            <td class="text-center">1</td>
+            <td class="text-center"><%=i + 1%></td>
             <td><%=tf?.name%></td>
             <td><%=tf?.address%></td>
             <td><%=tf?.name%></td>
@@ -78,6 +83,9 @@
           <% }); %>
         </tbody>
       </table>
+    </div>
+    <div class="btn-wrap">
+      <button type="button" onclick="genPDF()">Download PDF</button>
     </div>
     <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
     <script src="https://unpkg.com/jspdf-autotable@3.6.0/dist/jspdf.plugin.autotable.js"></script>
