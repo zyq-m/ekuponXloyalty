@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const path = require("path");
 const cors = require("cors");
 const helmet = require("helmet");
 const xssClean = require("xss-clean");
@@ -39,6 +40,9 @@ app.use(hpp());
 app.use(xssClean());
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use("/public", express.static("public"));
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "/src/views"));
 
 // Restrict all routes to only 100 requests per IP address every 1o minutes
 const limiter = rateLimit({
