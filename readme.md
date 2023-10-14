@@ -227,6 +227,7 @@ axios.post("/admin/user/register/cafe", {
     name, // string
     phoneNo, // string
     address, // string
+    password, // string
 });
 // response
 {
