@@ -16,9 +16,9 @@ exports.registerStudent = async (req, res) => {
 
 exports.registerCafe = async (req, res) => {
   try {
-    const student = await cafeModel.save(req.body);
+    const cafe = await cafeModel.save(req.body);
 
-    return res.status(201).send({ data: student });
+    return res.status(201).send({ data: cafe });
   } catch (error) {
     return res.status(500).send({ error: error });
   }
@@ -128,15 +128,19 @@ exports.getReport = pdf => async (req, res) => {
     return int ?? this.toString();
   };
 
+  const timestampFrom = new Date(`${from} 0:0:0`);
+  const timestampTo = new Date(`${to} 0:0:0`);
+
   try {
     const report = await prisma.$queryRaw`
       select c.id, p.name, c.name "cafeName", p.address, p."phoneNo", c."accountNo", count(c.id) "totalTransaction", sum(t.amount) amount
       from "TWallet" w
-      inner join "Transaction" t on w."transactionId" = t.id 
+      inner join "Transaction" t on w."transactionId" = t.id
       inner join "Cafe" c on c.id = t."cafeId"
       inner join "Profile" p on p."userId" = c."userId"
-      where w.approved = false and t."createdAt" >= ${new Date(from)}
-      -- and "createdAt" < ${new Date(to)}
+      where t."createdAt" > '2023-09-27 00:00:00'
+      -- and '2023-09-26 04:32:05'
+      and w.approved = false
       group by c.id, p.address, p."phoneNo", p.name`;
 
     // ! this query need refactor
