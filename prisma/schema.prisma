@@ -123,7 +123,7 @@ model Transaction {
   student           Student   @relation(fields: [matricNo], references: [matricNo])
   matricNo          String    @db.VarChar(6)
   amount            Decimal   @db.Money
-  createdAt         DateTime  @default(now())
+  createdAt         DateTime  @default(dbgenerated("CURRENT_DATE")) @db.Date
   claim             Claim[]
   walletTransaction TWallet[]
   pointTransaction  TPoint[]
