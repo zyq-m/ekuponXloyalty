@@ -63,7 +63,20 @@ exports.getStudent = async matricNo => {
     });
   }
 
-  return await prisma.student.findMany();
+  return await prisma.student.findMany({
+    include: {
+      user: {
+        select: {
+          active: true,
+        },
+      },
+      coupon: {
+        select: {
+          total: true,
+        },
+      },
+    },
+  });
 };
 
 exports.getTransaction = async b40 => {

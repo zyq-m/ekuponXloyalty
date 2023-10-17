@@ -62,7 +62,15 @@ exports.getCafe = async cafeId => {
     });
   }
 
-  return await prisma.cafe.findMany();
+  return await prisma.cafe.findMany({
+    include: {
+      user: {
+        select: {
+          active: true,
+        },
+      },
+    },
+  });
 };
 
 // Count total of cafe
