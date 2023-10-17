@@ -128,8 +128,13 @@ exports.getReport = pdf => async (req, res) => {
     return int ?? this.toString();
   };
 
-  const timestampFrom = new Date(`${from} 0:0:0`);
-  const timestampTo = new Date(`${to} 0:0:0`);
+  const dateFrom = new Date(from);
+  const dateTo = new Date(to);
+
+  // set date early 1 day
+  dateFrom.setDate(dateFrom.getDate() - 1);
+  // set date late 1 day
+  dateTo.setDate(dateTo.getDate() + 1);
 
   try {
     const report = await prisma.$queryRaw`
@@ -138,12 +143,14 @@ exports.getReport = pdf => async (req, res) => {
       inner join "Transaction" t on w."transactionId" = t.id
       inner join "Cafe" c on c.id = t."cafeId"
       inner join "Profile" p on p."userId" = c."userId"
-      where t."createdAt" > '2023-09-27 00:00:00'
-      -- and '2023-09-26 04:32:05'
+      where t."createdAt" >= ${dateFrom}
+      and t."createdAt" < ${dateTo}
       and w.approved = false
       group by c.id, p.address, p."phoneNo", p.name`;
 
-    // ! this query need refactor
+    if (!report.length) {
+      return res.status(404).send({ message: "Transaction not found" });
+    }
 
     if (pdf) {
       res.header("Content-Security-Policy", "img-src 'self'");
