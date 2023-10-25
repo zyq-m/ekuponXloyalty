@@ -10,14 +10,14 @@ exports.login = async (req, res) => {
     const user = await getUser(id);
 
     if (!user) {
-      return res.status(404).message("Invalid credentials");
+      return res.status(404).send("Invalid credentials");
     }
 
     // Check password
     const isValid = check(password, user.password);
 
     if (!isValid) {
-      return res.status(404).message("Invalid password");
+      return res.status(404).send("Invalid password");
     }
 
     // Generate token
@@ -26,7 +26,9 @@ exports.login = async (req, res) => {
     // Store refresh token in db
     await userTokenModel.storeRefreshToken(refreshToken, user.id);
 
-    return res.status(200).send({ accessToken, refreshToken });
+    return res
+      .status(200)
+      .send({ accessToken, refreshToken, role: user.role.name });
   } catch (error) {
     console.log(error);
     return res.status(500).send({ error: error });
