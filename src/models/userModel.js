@@ -16,5 +16,12 @@ exports.getUser = async id => {
     where: {
       id: isExist.value.userId,
     },
+    include: {
+      role: {
+        select: {
+          name: true,
+        },
+      },
+    },
   });
 };

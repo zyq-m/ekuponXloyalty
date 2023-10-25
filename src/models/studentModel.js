@@ -68,6 +68,7 @@ exports.getStudent = async matricNo => {
       user: {
         select: {
           active: true,
+          profile: true,
         },
       },
       coupon: {
