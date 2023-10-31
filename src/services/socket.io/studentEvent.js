@@ -23,8 +23,6 @@ module.exports = (io, socket) => {
         transaction: latestTransactions,
       };
 
-      console.log({ walletTotal, latestTransactions });
-
       io.emit("student:get-wallet-total", res);
     } catch (error) {
       io.emit("student:get-wallet-total", { error: error });
