@@ -1,7 +1,7 @@
 const { verifyAccessToken } = require("../../jwt");
 
 module.exports = async (socket, next) => {
-  const header = socket.handshake.headers["authorization"];
+  const header = socket.handshake.auth.token;
 
   // If token is verified, go next
   try {
