@@ -3,7 +3,7 @@ const { hash } = require("../utils/bcrypt");
 
 const prisma = new PrismaClient();
 
-exports.save = async options => {
+exports.save = async (options) => {
   let b40 = options.b40;
 
   return await prisma.student.create({
@@ -40,7 +40,7 @@ exports.save = async options => {
   });
 };
 
-exports.getStudent = async matricNo => {
+exports.getStudent = async (matricNo) => {
   if (matricNo) {
     return await prisma.student.findUnique({
       where: {
@@ -80,7 +80,23 @@ exports.getStudent = async matricNo => {
   });
 };
 
-exports.getTransaction = async b40 => {
+exports.getTransaction = async (b40, matricNo) => {
+  if (matricNo) {
+    return await prisma.student.findUnique({
+      select: {
+        icNo: true,
+        matricNo: true,
+        transaction: {
+          take: 3,
+        },
+      },
+      where: {
+        matricNo: matricNo,
+        b40: b40,
+      },
+    });
+  }
+
   return await prisma.student.findMany({
     select: {
       icNo: true,
@@ -133,7 +149,7 @@ exports.total = async () => {
   return await prisma.student.count();
 };
 
-exports.getUserId = async matricNo => {
+exports.getUserId = async (matricNo) => {
   return await prisma.student.findUnique({
     where: {
       matricNo,
@@ -145,7 +161,7 @@ exports.getUserId = async matricNo => {
 };
 
 // Get b40 student's total wallet
-exports.getWalletTotal = async matricNo => {
+exports.getWalletTotal = async (matricNo) => {
   return await prisma.student.findUnique({
     where: {
       b40: true,
@@ -167,7 +183,7 @@ exports.getWalletTotal = async matricNo => {
 };
 
 // Get student's total point
-exports.getPointTotal = async matricNo => {
+exports.getPointTotal = async (matricNo) => {
   return await prisma.student.findUnique({
     where: {
       b40: false,
