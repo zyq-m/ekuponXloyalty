@@ -4,14 +4,14 @@ const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
 const oneTimeUrlSecret = process.env.OTP_SECRET;
 
-exports.generateAccessToken = user => {
+exports.generateAccessToken = (user) => {
   const payload = { id: user.id, role: user.roleId };
   return (accessToken = jwt.sign(payload, accessTokenSecret, {
     expiresIn: "30m", // 30 minintes
   }));
 };
 
-exports.generateRefreshToken = user => {
+exports.generateRefreshToken = (user) => {
   const payload = { id: user.id, role: user.roleId };
   return jwt.sign(payload, refreshTokenSecret, {
     expiresIn: "30d", // a month
@@ -20,15 +20,15 @@ exports.generateRefreshToken = user => {
 
 // If token valid wiil return decoded token
 // Fails return error
-exports.verifyAccessToken = token => {
+exports.verifyAccessToken = (token) => {
   return jwt.verify(token, accessTokenSecret);
 };
 
-exports.verifyRefreshToken = token => {
+exports.verifyRefreshToken = (token) => {
   return jwt.verify(token, refreshTokenSecret);
 };
 
 // Verify token (one-time-URL)
-exports.verifyPoint = token => {
+exports.verifyPoint = (token) => {
   return jwt.verify(token, oneTimeUrlSecret);
 };
