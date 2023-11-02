@@ -23,10 +23,10 @@ exports.getStudent = async function (req, res) {
   });
 
   if (!student) {
-    return res.status(404).json({ message: "Not found" });
+    return res.status(404).send({ message: "Not found" });
   }
 
-  return res.status(200).json({ data: student });
+  return res.status(200).send({ student });
 };
 
 // Make payment
