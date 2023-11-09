@@ -20,11 +20,11 @@ exports.checkBalance = async (req, res, next) => {
       //   },
     },
   });
-
-  const spend = transactionToday._sum.amount + amount;
+  const total = transactionToday._sum.amount;
+  const totalSpendToday = !total ? 0 : total;
+  const spend = totalSpendToday + parseInt(amount);
 
   if (spend <= 6) {
-    console.log(transactionToday._sum.amount);
     next();
   } else {
     // When spend exceeds 6, reject requests
