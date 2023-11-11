@@ -41,6 +41,14 @@ exports.getTransaction = async (req, res) => {
     where: {
       cafeId: cafeId,
     },
+    include: {
+      walletTransaction: true,
+      cafe: {
+        select: {
+          name: true,
+        },
+      },
+    },
   });
 
   if (!transaction.length) {
@@ -96,11 +104,12 @@ exports.getEkuponURL = async (req, res) => {
   return res.status(201).json({
     data: {
       url: url,
+      name: id.name,
     },
   });
 };
 
-exports.getOTP = url => async (req, res) => {
+exports.getOTP = (url) => async (req, res) => {
   const { cafeId } = req.params;
   const id = await getCafeId(cafeId);
 
@@ -115,7 +124,12 @@ exports.getOTP = url => async (req, res) => {
 
     if (url) {
       const loyaltyUrl = `${generateUrl(cafeId)}&&otp=${token}`;
-      return res.status(201).json({ data: { url: loyaltyUrl } });
+      return res.status(201).json({
+        data: {
+          url: loyaltyUrl,
+          name: id.name,
+        },
+      });
     }
 
     return res.status(200).json({ data: { otp: token } });
@@ -147,6 +161,7 @@ async function getCafeId(cafeId) {
     },
     select: {
       id: true,
+      name: true,
       sale: {
         select: {
           otp: true,
