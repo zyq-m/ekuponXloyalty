@@ -41,6 +41,20 @@ exports.createWalletTransaction = async (matricNo, cafeId, amount) => {
     },
   });
 
+  // Update cafe's sale
+  const prevSale = await prisma.sale.findUnique({
+    where: { cafeId: cafeId },
+    select: { total: true },
+  });
+  await prisma.sale.update({
+    data: {
+      total: +prevSale.total + +amount,
+    },
+    where: {
+      cafeId: cafeId,
+    },
+  });
+
   return pay;
 };
 

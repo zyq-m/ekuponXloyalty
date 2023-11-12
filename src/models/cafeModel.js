@@ -4,7 +4,7 @@ const { generateSecret } = require("../utils/otp");
 
 const prisma = new PrismaClient();
 
-exports.save = async options => {
+exports.save = async (options) => {
   const secret = generateSecret();
   return await prisma.cafe.create({
     data: {
@@ -39,7 +39,7 @@ exports.save = async options => {
   });
 };
 
-exports.getCafe = async cafeId => {
+exports.getCafe = async (cafeId) => {
   if (cafeId) {
     return await prisma.cafe.findUnique({
       where: {
@@ -78,14 +78,14 @@ exports.total = async () => {
   return await prisma.cafe.count();
 };
 
-exports.getUserId = async id => {
+exports.getUserId = async (id) => {
   return await prisma.cafe.findUnique({
     where: { id },
     select: { userId: true },
   });
 };
 
-exports.getTotalSales = async cafeId => {
+exports.getTotalSales = async (cafeId) => {
   return await prisma.sale.findUnique({
     where: {
       cafeId,
@@ -96,18 +96,48 @@ exports.getTotalSales = async cafeId => {
   });
 };
 
-exports.getLatestTransactions = async cafeId => {
-  return await prisma.tWallet.findMany({
+exports.getLatestTransactions = async (cafeId) => {
+  // return await prisma.tWallet.findMany({
+  //   where: {
+  //     transaction: {
+  //       cafeId,
+  //     },
+  //   },
+  //   orderBy: {
+  //     transaction: {
+  //       createdAt: "desc",
+  //     },
+  //   },
+  //   take: 3,
+  //   include: {
+  //     transaction: true,
+  //   },
+  // });
+  return await prisma.cafe.findUnique({
+    select: {
+      id: true,
+      transaction: {
+        include: {
+          student: {
+            select: {
+              matricNo: true,
+            },
+          },
+          walletTransaction: true,
+          cafe: {
+            select: {
+              name: true,
+            },
+          },
+        },
+        take: 3,
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
+    },
     where: {
-      transaction: {
-        cafeId,
-      },
+      id: cafeId,
     },
-    orderBy: {
-      transaction: {
-        createdAt: "desc",
-      },
-    },
-    take: 3,
   });
 };

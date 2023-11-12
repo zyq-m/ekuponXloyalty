@@ -102,8 +102,22 @@ exports.getTransaction = function (wallet) {
   return async function (req, res) {
     const { matricNo } = req.params;
     const options = wallet
-      ? { walletTransaction: true }
-      : { pointTransaction: true };
+      ? {
+          walletTransaction: true,
+          cafe: {
+            select: {
+              name: true,
+            },
+          },
+        }
+      : {
+          pointTransaction: true,
+          cafe: {
+            select: {
+              name: true,
+            },
+          },
+        };
     const transaction = await prisma.transaction.findMany({
       where: {
         matricNo: matricNo,
@@ -111,10 +125,7 @@ exports.getTransaction = function (wallet) {
       include: options,
     });
 
-    const isExist = wallet
-      ? transaction[0].walletTransaction
-      : transaction[0].pointTransaction;
-    if (!isExist.length) {
+    if (!transaction.length) {
       return res.status(404).json({ message: "Not found" });
     }
 
@@ -146,4 +157,24 @@ exports.getTransactionRange = function (wallet) {
 
     return res.status(200).json({ data: transaction });
   };
+};
+
+// Get list of cafe
+exports.getCafe = async function (req, res) {
+  try {
+    const cafe = await prisma.cafe.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+
+    if (!cafe.length) {
+      return res.status(404).json({ message: "Not found" });
+    }
+
+    return res.status(200).json({ data: cafe });
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
 };

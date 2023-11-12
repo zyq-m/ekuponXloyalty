@@ -7,6 +7,7 @@ const {
   getTransactionRange,
   makePayment,
   collectPoint,
+  getCafe,
 } = require("../controllers/studentController");
 
 // Require middleware
@@ -16,6 +17,7 @@ const { verifyPoint } = require("../middlewares/collectPoint");
 const router = express.Router();
 
 // Get student by matric no
+router.get("/cafe", getCafe);
 router.get("/:matricNo", getStudent);
 
 router.get("/transaction/wallet/:matricNo", getTransaction(true));

@@ -84,9 +84,16 @@ exports.getTransaction = async (b40, matricNo) => {
   if (matricNo) {
     return await prisma.student.findUnique({
       select: {
-        icNo: true,
         matricNo: true,
         transaction: {
+          include: {
+            cafe: {
+              select: {
+                name: true,
+              },
+            },
+            walletTransaction: true,
+          },
           take: 3,
         },
       },

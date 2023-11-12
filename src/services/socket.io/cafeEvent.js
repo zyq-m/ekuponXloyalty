@@ -5,7 +5,7 @@ const {
 
 module.exports = (io, socket) => {
   // Get cafe's total sales & latest transaction
-  socket.on("cafe:get-sales-total", async payload => {
+  socket.on("cafe:get-sales-total", async (payload) => {
     const { cafeId } = payload;
 
     try {
@@ -13,7 +13,7 @@ module.exports = (io, socket) => {
       const latestTransactions = await getLatestTransactions(cafeId);
       const res = {
         total: totalSales.total,
-        transactions: latestTransactions,
+        transaction: latestTransactions,
       };
 
       io.emit("cafe:get-sales-total", res);

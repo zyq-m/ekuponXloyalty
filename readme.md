@@ -269,7 +269,7 @@ axios.put("/admin/student/wallet", {
 
 ```javascript
 // Get student by matric no
-axios.get("/student/123456)
+axios.get("/student/123456")
 // response
 {
   "data": {
@@ -337,7 +337,7 @@ axios.get('/student/transaction/point/from/to/123456')
 
 ```javascript
 // Pay (coupon)
-axios.get("/student/pay", {
+axios.post("/student/pay", {
   matricNo: string,
   cafeId: string,
   amount: int,
@@ -352,7 +352,7 @@ axios.get("/student/pay", {
 }
 
 // Collect points
-axios.get("/student/pay", {
+axios.post("/student/pay", {
   matricNo: string,
   cafeId: string,
   amount: int,
@@ -464,7 +464,7 @@ axios.get("/feedback", {
 ### Websocket Events
 
 ```javascript
-io.on("admin:get-overall", data => {
+io.on("admin:get-overall", (data) => {
   // data response
   // {
   //   student: 4,
