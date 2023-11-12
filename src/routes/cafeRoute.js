@@ -8,11 +8,15 @@ const {
   getTransaction,
   getEkuponURL,
   getOTP,
+  profile,
 } = require("../controllers/cafeController");
 
 const router = express.Router();
 
 router.get("/:cafeId", getCafe);
+// Profile
+router.get("/profile/:cafeId", profile(false));
+router.put("/profile/:cafeId", profile(true));
 
 // Get cafe QR
 router.get("/qr/ekupon/:cafeId", getEkuponURL);
