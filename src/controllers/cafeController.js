@@ -139,6 +139,50 @@ exports.getOTP = (url) => async (req, res) => {
   }
 };
 
+exports.profile = (update) => async (req, res) => {
+  const { cafeId } = req.params;
+
+  try {
+    const profile = await prisma.cafe.findUnique({
+      where: {
+        id: cafeId,
+      },
+      select: {
+        accountNo: true,
+        bank: true,
+      },
+    });
+
+    if (!profile) {
+      return res.status(404).send({ message: "Not found" });
+    }
+
+    if (update) {
+      const { bankName, accountNo } = req.body;
+
+      const updated = await prisma.cafe.update({
+        data: {
+          accountNo: accountNo,
+          bank: bankName,
+        },
+        where: {
+          id: cafeId,
+        },
+        select: {
+          accountNo: true,
+          bank: true,
+        },
+      });
+
+      return res.status(201).send(updated);
+    }
+
+    return res.status(200).send(profile);
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
+
 // HELPER
 // Get transaction by date
 async function transactionOnDate(cafeId, from, to) {
