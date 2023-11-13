@@ -120,8 +120,6 @@ exports.getOTP = (url) => async (req, res) => {
   // Generate 6 digit number
   // Hash otp
   try {
-    const token = generateToken(id.sale.otp);
-
     if (url) {
       const loyaltyUrl = `${generateUrl(cafeId)}&&otp=${token}`;
       return res.status(201).json({
@@ -132,7 +130,16 @@ exports.getOTP = (url) => async (req, res) => {
       });
     }
 
-    return res.status(200).json({ data: { otp: token } });
+    const token = generateToken(id.sale.otp);
+
+    return res
+      .status(200)
+      .json({
+        data: {
+          otp: token,
+          remaining: 30 - Math.floor((new Date().getTime() / 1000.0) % 30),
+        },
+      });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: error });
