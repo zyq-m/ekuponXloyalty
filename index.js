@@ -14,6 +14,7 @@ const cafe = require("./src/routes/cafeRoute");
 const admin = require("./src/routes/adminRoute");
 const feedback = require("./src/routes/feedbackRoute");
 const auth = require("./src/routes/authRoute");
+const point = require("./src/routes/pointRoute");
 // Require middleware
 const { authenticateToken } = require("./src/middlewares/authenticateToken");
 // Service
@@ -61,9 +62,10 @@ app.use("/student", student);
 app.use("/cafe", cafe);
 app.use("/admin", admin);
 app.use("/feedback", feedback);
+app.use("/point", point);
 
 // Socket io
-const onConnection = socket => {
+const onConnection = (socket) => {
   connectionEvent(io, socket);
   notificationEvent(io, socket);
   // STUDENT EVENTS
