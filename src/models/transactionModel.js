@@ -75,15 +75,19 @@ exports.createPointTransaction = async (matricNo, cafeId, amount, pointId) => {
     },
   });
 
-  // Update coupon balance
+  // Update point balance 
+  // Need to be refactor
   const prevCouponBalance = await prisma.point.findUnique({
     where: { matricNo: matricNo },
     select: { total: true },
   });
-  // console.log(prevCouponBalance.total);
-  await prisma.point.update({
-    data: {
-      total: parseInt(prevCouponBalance.total) + parseInt(amount),
+  await prisma.point.upsert({
+    create: {
+      matricNo: matricNo,
+      total: +amount,
+    },
+    update: {
+      total: +prevCouponBalance?.total + +amount,
     },
     where: {
       matricNo: matricNo,
