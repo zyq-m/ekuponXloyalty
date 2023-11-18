@@ -125,7 +125,7 @@ model Transaction {
   matricNo          String   @db.VarChar(6)
   amount            Decimal  @db.Money
   createdAt         DateTime @default(dbgenerated("CURRENT_DATE")) @db.Date
-  claim             Claim[]
+  claim             Claim?
   walletTransaction TWallet?
   pointTransaction  TPoint?
 }
@@ -133,11 +133,11 @@ model Transaction {
 model Claim {
   id            String      @id @default(cuid())
   transaction   Transaction @relation(fields: [transactionId], references: [id])
-  transactionId String
+  transactionId String      @unique
   claimed       Boolean     @default(false)
-  claimedAt     DateTime    @default(now())
-  admin         Admin       @relation(fields: [markedBy], references: [email])
-  markedBy      String      @db.VarChar(255)
+  claimedAt     DateTime?
+  admin         Admin?      @relation(fields: [markedBy], references: [email])
+  markedBy      String?     @db.VarChar(255)
 }
 
 model TWallet {
