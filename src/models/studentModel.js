@@ -5,8 +5,7 @@ const prisma = new PrismaClient();
 
 exports.save = async (options) => {
   let b40 = options.b40;
-
-  return await prisma.student.create({
+  const config = {
     data: {
       matricNo: options.matricNo,
       icNo: options.icNo,
@@ -30,14 +29,30 @@ exports.save = async (options) => {
           },
         },
       },
-
-      coupon: {
-        create: {
-          total: 0,
-        },
-      },
     },
-  });
+  };
+
+  if (b40) {
+    config.data.coupon = {
+      create: {
+        total: 0,
+      },
+    };
+
+    config.data.point = {
+      create: {
+        total: 0,
+      },
+    };
+  } else {
+    config.data.point = {
+      create: {
+        total: 0,
+      },
+    };
+  }
+
+  return await prisma.student.create(config);
 };
 
 exports.getStudent = async (matricNo) => {
