@@ -121,7 +121,7 @@ exports.suspendUser = async (req, res) => {
   }
 };
 
-exports.getReport = pdf => async (req, res) => {
+exports.getReport = (pdf) => async (req, res) => {
   const { from, to } = req.params;
   BigInt.prototype.toJSON = function () {
     const int = Number.parseInt(this.toString());
@@ -141,11 +141,12 @@ exports.getReport = pdf => async (req, res) => {
       select c.id, p.name, c.name "cafeName", p.address, p."phoneNo", c."accountNo", count(c.id) "totalTransaction", sum(t.amount) amount
       from "TWallet" w
       inner join "Transaction" t on w."transactionId" = t.id
+      inner join "Claim" cm on w."transactionId" = t.id
       inner join "Cafe" c on c.id = t."cafeId"
       inner join "Profile" p on p."userId" = c."userId"
       where t."createdAt" >= ${dateFrom}
       and t."createdAt" < ${dateTo}
-      and w.approved = false
+      and cm.claimed = false
       group by c.id, p.address, p."phoneNo", p.name`;
 
     if (!report.length) {
@@ -156,7 +157,7 @@ exports.getReport = pdf => async (req, res) => {
       res.header("Content-Security-Policy", "img-src 'self'");
       res.render("admin/transaction", { transaction: report });
     } else {
-      res.status(200).send({ data: report });
+      res.status(200).send(report);
     }
   } catch (error) {
     console.log(error);
