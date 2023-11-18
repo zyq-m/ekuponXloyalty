@@ -1,7 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-exports.defineRole = roles => {
+exports.defineRole = (roles) => {
   return async (req, res, next) => {
     const userRole = req.user.role;
     const isExist = await getRole(userRole);

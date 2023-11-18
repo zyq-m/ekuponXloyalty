@@ -17,6 +17,7 @@ const auth = require("./src/routes/authRoute");
 const point = require("./src/routes/pointRoute");
 // Require middleware
 const { authenticateToken } = require("./src/middlewares/authenticateToken");
+const { defineRole } = require("./src/middlewares/role");
 // Service
 const studentEvent = require("./src/services/socket.io/studentEvent");
 const cafeEvent = require("./src/services/socket.io/cafeEvent");
@@ -59,8 +60,8 @@ app.get("/", (req, res) => {
 app.use("/auth", auth);
 app.use(authenticateToken); // Every incomming request it will validate token
 app.use("/student", student);
-app.use("/cafe", cafe);
-app.use("/admin", admin);
+app.use("/cafe", defineRole(["CAFE"]), cafe);
+app.use("/admin", defineRole(["ADMIN"]), admin);
 app.use("/feedback", feedback);
 app.use("/point", point);
 
