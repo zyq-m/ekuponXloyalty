@@ -26,6 +26,11 @@ exports.createWalletTransaction = async (matricNo, cafeId, amount) => {
       transactionId: transaction.id,
     },
   });
+  await prisma.claim.create({
+    data: {
+      transactionId: transaction.id,
+    },
+  });
 
   // Update coupon balance
   const prevCouponBalance = await prisma.coupon.findUnique({
@@ -74,8 +79,13 @@ exports.createPointTransaction = async (matricNo, cafeId, amount, pointId) => {
       pointId: pointId,
     },
   });
+  await prisma.claim.create({
+    data: {
+      transactionId: transaction.id,
+    },
+  });
 
-  // Update point balance 
+  // Update point balance
   // Need to be refactor
   const prevCouponBalance = await prisma.point.findUnique({
     where: { matricNo: matricNo },
