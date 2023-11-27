@@ -1,8 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
-const jwt = require("jsonwebtoken");
-
 const { generatePDF } = require("../utils/pdf/pdf");
-const { generateToken, verify } = require("../utils/otp");
+const { generateToken } = require("../utils/otp");
+const { tWalletMany } = require("../models/transactionModel");
 
 const prisma = new PrismaClient();
 
@@ -37,19 +36,7 @@ exports.getCafe = async function getCafe(req, res) {
 
 exports.getTransaction = async (req, res) => {
   const { cafeId } = req.params;
-  const transaction = await prisma.transaction.findMany({
-    where: {
-      cafeId: cafeId,
-    },
-    include: {
-      walletTransaction: true,
-      cafe: {
-        select: {
-          name: true,
-        },
-      },
-    },
-  });
+  const transaction = await tWalletMany("CAFE", cafeId);
 
   if (!transaction.length) {
     return res.status(404).json({ message: "Not found" });
@@ -103,7 +90,7 @@ exports.getEkuponURL = async (req, res) => {
 
   return res.status(201).json({
     data: {
-      url: url,
+      url: `${url}&name=${id.name}`,
       name: id.name,
     },
   });
@@ -123,7 +110,7 @@ exports.getOTP = (url) => async (req, res) => {
     const token = generateToken(id.sale.otp);
 
     if (url) {
-      const loyaltyUrl = `${generateUrl(cafeId)}&&otp=${token}`;
+      const loyaltyUrl = `${generateUrl(cafeId)}&otp=${token}&name=${id.name}`;
       return res.status(201).json({
         data: {
           url: loyaltyUrl,

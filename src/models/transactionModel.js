@@ -76,7 +76,7 @@ exports.createPointTransaction = async (matricNo, cafeId, amount, pointId) => {
   const point = await prisma.tPoint.create({
     data: {
       transactionId: transaction.id,
-      pointId: pointId,
+      pointId: +pointId,
     },
   });
   await prisma.claim.create({
@@ -91,18 +91,58 @@ exports.createPointTransaction = async (matricNo, cafeId, amount, pointId) => {
     where: { matricNo: matricNo },
     select: { total: true },
   });
-  await prisma.point.upsert({
-    create: {
-      matricNo: matricNo,
-      total: +amount,
-    },
-    update: {
-      total: +prevCouponBalance?.total + +amount,
-    },
+  await prisma.point.update({
     where: {
       matricNo: matricNo,
+    },
+    data: {
+      total: +prevCouponBalance.total + +amount,
     },
   });
 
   return point;
+};
+
+exports.tWalletMany = async (role, id, take) => {
+  const config = role === "B40" ? { matricNo: id } : { cafeId: id };
+
+  return await prisma.tWallet.findMany({
+    where: {
+      transaction: config,
+    },
+    include: {
+      transaction: {
+        include: {
+          cafe: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+    take: take,
+  });
+};
+
+exports.tPointMany = async (id, take) => {
+  return await prisma.tPoint.findMany({
+    where: {
+      transaction: {
+        matricNo: id,
+      },
+    },
+    include: {
+      transaction: {
+        include: {
+          cafe: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+    take: take,
+  });
 };

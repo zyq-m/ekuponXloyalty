@@ -101,29 +101,13 @@ exports.collectPoint = async function (req, res) {
 exports.getTransaction = function (wallet) {
   return async function (req, res) {
     const { matricNo } = req.params;
-    const options = wallet
-      ? {
-          walletTransaction: true,
-          cafe: {
-            select: {
-              name: true,
-            },
-          },
-        }
-      : {
-          pointTransaction: true,
-          cafe: {
-            select: {
-              name: true,
-            },
-          },
-        };
-    const transaction = await prisma.transaction.findMany({
-      where: {
-        matricNo: matricNo,
-      },
-      include: options,
-    });
+    let transaction;
+
+    if (wallet) {
+      transaction = await transactionModel.tWalletMany("B40", matricNo);
+    } else {
+      transaction = await transactionModel.tPointMany(matricNo);
+    }
 
     if (!transaction.length) {
       return res.status(404).json({ message: "Not found" });

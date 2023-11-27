@@ -1,8 +1,5 @@
-const {
-  getWalletTotal,
-  getTransaction,
-  getPointTotal,
-} = require("../../models/studentModel");
+const { getWalletTotal, getPointTotal } = require("../../models/studentModel");
+const { tWalletMany, tPointMany } = require("../../models/transactionModel");
 
 module.exports = (io, socket) => {
   // Get b40 student's wallet amount & transaction
@@ -11,7 +8,7 @@ module.exports = (io, socket) => {
 
     try {
       const walletTotal = await getWalletTotal(matricNo);
-      const latestTransactions = await getTransaction(true, matricNo);
+      const latestTransactions = await tWalletMany("B40", matricNo, 3);
 
       if (!walletTotal) {
         return io.emit("student:wallet-res", { message: "Not found" });
@@ -19,7 +16,6 @@ module.exports = (io, socket) => {
 
       const res = {
         coupon: walletTotal.coupon,
-        point: walletTotal.point,
         transaction: latestTransactions,
       };
 
@@ -35,7 +31,7 @@ module.exports = (io, socket) => {
 
     try {
       const pointTotal = await getPointTotal(matricNo);
-      const latestTransactions = await getTransaction(false, matricNo);
+      const latestTransactions = await tPointMany(matricNo, 3);
 
       if (!pointTotal) {
         return io.emit("student:point-total", { message: "Not found" });
