@@ -11,7 +11,9 @@ module.exports = (io, socket) => {
       const latestTransactions = await tWalletMany("B40", matricNo, 3);
 
       if (!walletTotal) {
-        return io.emit("student:wallet-res", { message: "Not found" });
+        return io
+          .to(matricNo)
+          .emit("student:wallet-res", { message: "Not found" });
       }
 
       const res = {
@@ -19,9 +21,9 @@ module.exports = (io, socket) => {
         transaction: latestTransactions,
       };
 
-      io.emit("student:get-wallet-total", res);
+      io.to(matricNo).emit("student:get-wallet-total", res);
     } catch (error) {
-      io.emit("student:get-wallet-total", { error: error });
+      io.to(matricNo).emit("student:get-wallet-total", { error: error });
     }
   });
 
@@ -34,7 +36,9 @@ module.exports = (io, socket) => {
       const latestTransactions = await tPointMany(matricNo, 3);
 
       if (!pointTotal) {
-        return io.emit("student:point-total", { message: "Not found" });
+        return io
+          .to(matricNo)
+          .emit("student:point-total", { message: "Not found" });
       }
 
       const res = {
@@ -42,9 +46,9 @@ module.exports = (io, socket) => {
         transaction: latestTransactions,
       };
 
-      io.emit("student:get-point-total", res);
+      io.to(matricNo).emit("student:get-point-total", res);
     } catch (error) {
-      io.emit("student:get-point-total", { error: error });
+      io.to(matricNo).emit("student:get-point-total", { error: error });
     }
   });
 };

@@ -14,9 +14,9 @@ module.exports = (io, socket) => {
         transaction: latestTransactions,
       };
 
-      io.emit("cafe:get-sales-total", res);
+      io.to(cafeId).emit("cafe:get-sales-total", res);
     } catch (error) {
-      io.emit("cafe:get-sales-total", { error: error });
+      io.to(cafeId).emit("cafe:get-sales-total", { error: error });
     }
   });
 };
