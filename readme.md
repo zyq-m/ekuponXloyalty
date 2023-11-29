@@ -226,6 +226,12 @@ axios.get("/admin/report/transaction/:from/:to"); // eg. /admin/report/transacti
 //   ]
 // }
 
+// Get cafe transaction report
+axios.get("/admin/report/transaction/pdf/:from/:to"); // eg. /admin/report/transaction/2023-11-29/2023-11-29
+// response
+// return html
+// jadikan link
+
 ```
 
 #### Post request
