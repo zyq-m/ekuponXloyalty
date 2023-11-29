@@ -190,6 +190,42 @@ axios.get("/admin/student/points", {
   ...
   ]
 }
+
+// Get cafe transaction report
+axios.get("/admin/report/transaction/:from/:to"); // eg. /admin/report/transaction/2023-11-29/2023-11-29
+// response
+// {
+//   "transaction": [
+//     {
+//       "id": "Elias51",
+//       "name": "Shaun Hilll Sr.",
+//       "cafeName": "Cafe Hershel",
+//       "accountNo": "02803392",
+//       "bank": null,
+//       "totalTransaction": 3,
+//       "totalAmount": "5"
+//     },
+//     {
+//       "id": "Jammie34",
+//       "name": "Danny Sipes II",
+//       "cafeName": "Cafe Gussie",
+//       "accountNo": "56820669",
+//       "bank": null,
+//       "totalTransaction": 3,
+//       "totalAmount": "5"
+//     },
+//     {
+//       "id": "Ray86",
+//       "name": "Viola Koss",
+//       "cafeName": "Cafe Rowland",
+//       "accountNo": "85738933",
+//       "bank": null,
+//       "totalTransaction": 3,
+//       "totalAmount": "5"
+//     }
+//   ]
+// }
+
 ```
 
 #### Post request
