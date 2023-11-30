@@ -5,14 +5,14 @@ const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
 const oneTimeUrlSecret = process.env.OTP_SECRET;
 
 exports.generateAccessToken = (user) => {
-  const payload = { id: user.id, role: user.roleId };
-  return (accessToken = jwt.sign(payload, accessTokenSecret, {
+  const payload = { id: user.id, roleId: user.roleId };
+  return jwt.sign(payload, accessTokenSecret, {
     expiresIn: "30m", // 30 minintes
-  }));
+  });
 };
 
 exports.generateRefreshToken = (user) => {
-  const payload = { id: user.id, role: user.roleId };
+  const payload = { id: user.id, roleId: user.roleId };
   return jwt.sign(payload, refreshTokenSecret, {
     expiresIn: "30d", // a month
   });
