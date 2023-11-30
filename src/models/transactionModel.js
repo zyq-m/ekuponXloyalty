@@ -17,18 +17,19 @@ exports.createWalletTransaction = async (matricNo, cafeId, amount) => {
     data: {
       matricNo: matricNo,
       cafeId: cafeId,
-      amount: amount,
     },
   });
 
   const pay = await prisma.tWallet.create({
     data: {
       transactionId: transaction.id,
+      amount: amount,
     },
   });
   await prisma.claim.create({
     data: {
       transactionId: transaction.id,
+      transactionType: "wallet",
     },
   });
 
@@ -39,7 +40,7 @@ exports.createWalletTransaction = async (matricNo, cafeId, amount) => {
   });
   await prisma.coupon.update({
     data: {
-      total: parseInt(prevCouponBalance.total) - parseInt(amount),
+      total: +prevCouponBalance.total - +amount,
     },
     where: {
       matricNo: matricNo,
@@ -69,7 +70,6 @@ exports.createPointTransaction = async (matricNo, cafeId, amount, pointId) => {
     data: {
       cafeId: cafeId,
       matricNo: matricNo,
-      amount: amount,
     },
   });
   // Create new record
@@ -82,6 +82,7 @@ exports.createPointTransaction = async (matricNo, cafeId, amount, pointId) => {
   await prisma.claim.create({
     data: {
       transactionId: transaction.id,
+      transactionType: "point",
     },
   });
 
@@ -122,6 +123,11 @@ exports.tWalletMany = async (role, id, take) => {
       },
     },
     take: take,
+    orderBy: {
+      transaction: {
+        createdAt: "desc",
+      },
+    },
   });
 };
 
@@ -140,9 +146,23 @@ exports.tPointMany = async (id, take) => {
               name: true,
             },
           },
+          pointTransaction: {
+            select: {
+              point: {
+                select: {
+                  value: true,
+                },
+              },
+            },
+          },
         },
       },
     },
     take: take,
+    orderBy: {
+      transaction: {
+        createdAt: "desc",
+      },
+    },
   });
 };

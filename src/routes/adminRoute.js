@@ -11,13 +11,17 @@ router.get("/student", adminController.getStudent);
 router.get("/cafe", adminController.getCafe);
 
 // Get cafe & student transactions
-router.get("/student/transactions", adminController.getTransactionStudent);
-router.get("/cafe/transactions", adminController.getTransactionCafe);
+// router.get("/student/transactions", adminController.getWalletTransaction);
+router.get(
+  "/student/transactions/:matricNo",
+  adminController.getWalletTransaction
+);
+router.get("/cafe/transactions/:cafeId", adminController.getTransactionCafe);
 // Get student points (non-b40)
-router.get("/student/points", adminController.getTransactionStudentB40);
+router.get("/student/points/:matricNo", adminController.getPointTransaction);
 
 // Verify cafe's claims
-router.post("/cafe/claim");
+router.post("/cafe/claim", adminController.claimTransaction);
 
 // Suspend a user
 router.put("/user/suspend", adminController.suspendUser);

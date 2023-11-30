@@ -19,7 +19,7 @@ function verify(token, secret) {
     secret: secret,
     encoding: "base32",
     token: token,
-    window: 1,
+    window: 0,
   });
 }
 
