@@ -82,7 +82,7 @@ model Point {
   id       String  @id @default(cuid())
   student  Student @relation(fields: [matricNo], references: [matricNo])
   matricNo String  @unique @db.VarChar(6)
-  total    Decimal @default(0.00) @db.Money
+  total    Int     @default(0) @db.Integer
 }
 
 model CouponHistory {
@@ -97,7 +97,7 @@ model PointHistory {
   id        String   @id @default(cuid())
   student   Student  @relation(fields: [matricNo], references: [matricNo])
   matricNo  String   @db.VarChar(6)
-  total     Decimal  @default(0.00) @db.Money
+  total     Int      @default(0) @db.Integer
   updatedAt DateTime @default(now())
 }
 
@@ -123,21 +123,22 @@ model Transaction {
   cafeId            String   @db.VarChar(12)
   student           Student  @relation(fields: [matricNo], references: [matricNo])
   matricNo          String   @db.VarChar(6)
-  amount            Decimal  @db.Money
   createdAt         DateTime @default(dbgenerated("CURRENT_DATE")) @db.Date
+  createdOn         DateTime @default(now()) @db.Timestamp()
   claim             Claim?
   walletTransaction TWallet?
   pointTransaction  TPoint?
 }
 
 model Claim {
-  id            String      @id @default(cuid())
-  transaction   Transaction @relation(fields: [transactionId], references: [id])
-  transactionId String      @unique
-  claimed       Boolean     @default(false)
-  claimedAt     DateTime?
-  admin         Admin?      @relation(fields: [markedBy], references: [email])
-  markedBy      String?     @db.VarChar(255)
+  id              String      @id @default(cuid())
+  transaction     Transaction @relation(fields: [transactionId], references: [id])
+  transactionId   String      @unique
+  claimed         Boolean     @default(false)
+  claimedAt       DateTime?
+  admin           Admin?      @relation(fields: [markedBy], references: [email])
+  markedBy        String?     @db.VarChar(255)
+  transactionType String?     @db.VarChar(255)
 }
 
 model TWallet {
@@ -145,6 +146,7 @@ model TWallet {
   transaction   Transaction @relation(fields: [transactionId], references: [id])
   transactionId String      @unique
   approved      Boolean     @default(false)
+  amount        Decimal     @db.Money
 }
 
 model TPoint {
