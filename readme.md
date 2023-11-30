@@ -280,6 +280,16 @@ axios.post("/admin/user/register/cafe", {
 
 // Register admin
 // Coming soon...
+
+// Verify claim
+axios.post("/admin/cafe/claim", {
+  from: "2023-11-27",
+  to: "2023-11-30",
+  email: "admin123@gmail.com" // admin's email
+})
+// response
+// 201 status
+
 ```
 
 #### Put request
