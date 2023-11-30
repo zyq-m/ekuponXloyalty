@@ -78,7 +78,7 @@ const onConnection = (socket) => {
 };
 
 // Socket.io middleware
-io.use(socketAuth);
+// io.use(socketAuth);
 io.on("connection", onConnection);
 
 apiServer.listen(port, () => {
