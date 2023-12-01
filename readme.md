@@ -124,7 +124,7 @@ axios.get("/admin/cafe");
 }
 
 // Get student transactions (coupon)
-axios.get("/admin/student/transactions");
+axios.get("/admin/student/transactions/123456");
 // response
 {
   data: [
@@ -146,7 +146,7 @@ axios.get("/admin/student/transactions");
 }
 
 // Get cafe transaction (coupon)
-axios.get("/admin/cafe/transactions");
+axios.get("/admin/cafe/transactions/cafe1");
 // response
 {
   data: [
@@ -168,7 +168,7 @@ axios.get("/admin/cafe/transactions");
 }
 
 // Get point transactions
-axios.get("/admin/student/points", {
+axios.get("/admin/student/points/123456", {
     b40: true, // true or false
 });
 // response

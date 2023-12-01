@@ -4,6 +4,11 @@ const prisma = new PrismaClient();
 exports.defineRole = (roles) => {
   return async (req, res, next) => {
     const roleId = req.user?.roleId;
+
+    if (!roleId) {
+      return res.status(405).send({ message: "Who are you?" });
+    }
+
     const roleName = await getRole(roleId);
 
     // If roles(arr) not include in userRole(req header)
