@@ -8,7 +8,7 @@ exports.save = async (id, description) => {
 
   return await prisma.feedback.create({
     data: {
-      userId: userId,
+      userId: userId.value.userId,
       description: description,
     },
   });

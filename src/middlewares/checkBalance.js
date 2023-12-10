@@ -5,31 +5,43 @@ const prisma = new PrismaClient();
 exports.checkBalance = async (req, res, next) => {
   const { matricNo, amount } = req.body;
 
-  const transactionToday = await prisma.transaction.aggregate({
+  const date = new Date();
+
+  const transactionToday = await prisma.tWallet.aggregate({
     _sum: {
       amount: true,
     },
     where: {
-      matricNo: matricNo,
-      createdAt: {
-        lte: new Date(), // less than or equal
-        gte: new Date(), // greater than org equal
+      transaction: {
+        matricNo: matricNo,
+        createdAt: {
+          equals: date,
+        },
       },
-      //   createdAt: {
-      //     equals: new Date(),
-      //   },
     },
   });
 
-  const spend = transactionToday._sum.amount + amount;
+  const coupon = await prisma.coupon.findUnique({
+    select: {
+      total: true,
+    },
+    where: {
+      matricNo: matricNo,
+    },
+  });
+
+  if (coupon.total < 2) {
+    return res.status(406).send({ message: "Insufficient amount" });
+  }
+
+  const total = transactionToday._sum.amount;
+  const totalSpendToday = !total ? 0 : +total;
+  const spend = totalSpendToday + +amount;
 
   if (spend <= 6) {
-    console.log(transactionToday._sum.amount);
     next();
   } else {
     // When spend exceeds 6, reject requests
-    return res
-      .status(406)
-      .json({ message: "You have reach the limit of spend" });
+    res.status(406).send({ message: "You have reach the limit of spend" });
   }
 };

@@ -4,7 +4,7 @@ const { generateSecret } = require("../utils/otp");
 
 const prisma = new PrismaClient();
 
-exports.save = async options => {
+exports.save = async (options) => {
   const secret = generateSecret();
   return await prisma.cafe.create({
     data: {
@@ -39,7 +39,7 @@ exports.save = async options => {
   });
 };
 
-exports.getCafe = async cafeId => {
+exports.getCafe = async (cafeId) => {
   if (cafeId) {
     return await prisma.cafe.findUnique({
       where: {
@@ -62,7 +62,15 @@ exports.getCafe = async cafeId => {
     });
   }
 
-  return await prisma.cafe.findMany();
+  return await prisma.cafe.findMany({
+    include: {
+      user: {
+        select: {
+          active: true,
+        },
+      },
+    },
+  });
 };
 
 // Count total of cafe
@@ -70,14 +78,14 @@ exports.total = async () => {
   return await prisma.cafe.count();
 };
 
-exports.getUserId = async id => {
+exports.getUserId = async (id) => {
   return await prisma.cafe.findUnique({
     where: { id },
     select: { userId: true },
   });
 };
 
-exports.getTotalSales = async cafeId => {
+exports.getTotalSales = async (cafeId) => {
   return await prisma.sale.findUnique({
     where: {
       cafeId,
@@ -85,21 +93,5 @@ exports.getTotalSales = async cafeId => {
     select: {
       total: true,
     },
-  });
-};
-
-exports.getLatestTransactions = async cafeId => {
-  return await prisma.tWallet.findMany({
-    where: {
-      transaction: {
-        cafeId,
-      },
-    },
-    orderBy: {
-      transaction: {
-        createdAt: "desc",
-      },
-    },
-    take: 3,
   });
 };

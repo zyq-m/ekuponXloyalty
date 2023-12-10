@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 // Count total of transaction made
 exports.totalCoupon = async () => {
-  return await prisma.coupon.count();
+  return await prisma.tWallet.count();
 };
 
 // Count total of point made
@@ -17,13 +17,19 @@ exports.createWalletTransaction = async (matricNo, cafeId, amount) => {
     data: {
       matricNo: matricNo,
       cafeId: cafeId,
-      amount: amount,
     },
   });
 
   const pay = await prisma.tWallet.create({
     data: {
       transactionId: transaction.id,
+      amount: amount,
+    },
+  });
+  await prisma.claim.create({
+    data: {
+      transactionId: transaction.id,
+      transactionType: "wallet",
     },
   });
 
@@ -34,10 +40,24 @@ exports.createWalletTransaction = async (matricNo, cafeId, amount) => {
   });
   await prisma.coupon.update({
     data: {
-      total: parseInt(prevCouponBalance.total) - parseInt(amount),
+      total: +prevCouponBalance.total - +amount,
     },
     where: {
       matricNo: matricNo,
+    },
+  });
+
+  // Update cafe's sale
+  const prevSale = await prisma.sale.findUnique({
+    where: { cafeId: cafeId },
+    select: { total: true },
+  });
+  await prisma.sale.update({
+    data: {
+      total: +prevSale.total + +amount,
+    },
+    where: {
+      cafeId: cafeId,
     },
   });
 
@@ -50,31 +70,99 @@ exports.createPointTransaction = async (matricNo, cafeId, amount, pointId) => {
     data: {
       cafeId: cafeId,
       matricNo: matricNo,
-      amount: amount,
     },
   });
   // Create new record
   const point = await prisma.tPoint.create({
     data: {
       transactionId: transaction.id,
-      pointId: pointId,
+      pointId: +pointId,
+    },
+  });
+  await prisma.claim.create({
+    data: {
+      transactionId: transaction.id,
+      transactionType: "point",
     },
   });
 
-  // Update coupon balance
+  // Update point balance
+  // Need to be refactor
   const prevCouponBalance = await prisma.point.findUnique({
     where: { matricNo: matricNo },
     select: { total: true },
   });
-  // console.log(prevCouponBalance.total);
   await prisma.point.update({
-    data: {
-      total: parseInt(prevCouponBalance.total) + parseInt(amount),
-    },
     where: {
       matricNo: matricNo,
+    },
+    data: {
+      total: +prevCouponBalance.total + +amount,
     },
   });
 
   return point;
+};
+
+exports.tWalletMany = async (role, id, take) => {
+  const config = role === "B40" ? { matricNo: id } : { cafeId: id };
+
+  return await prisma.tWallet.findMany({
+    where: {
+      transaction: config,
+    },
+    include: {
+      transaction: {
+        include: {
+          cafe: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+    take: take,
+    orderBy: {
+      transaction: {
+        createdAt: "desc",
+      },
+    },
+  });
+};
+
+exports.tPointMany = async (id, take) => {
+  return await prisma.tPoint.findMany({
+    where: {
+      transaction: {
+        matricNo: id,
+      },
+    },
+    include: {
+      transaction: {
+        include: {
+          cafe: {
+            select: {
+              name: true,
+            },
+          },
+          pointTransaction: {
+            select: {
+              point: {
+                select: {
+                  value: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    take: take,
+    orderBy: {
+      transaction: {
+        createdAt: "desc",
+      },
+    },
+  });
 };

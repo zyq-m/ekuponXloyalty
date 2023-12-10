@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const path = require("path");
 const cors = require("cors");
 const helmet = require("helmet");
 const xssClean = require("xss-clean");
@@ -13,8 +14,10 @@ const cafe = require("./src/routes/cafeRoute");
 const admin = require("./src/routes/adminRoute");
 const feedback = require("./src/routes/feedbackRoute");
 const auth = require("./src/routes/authRoute");
+const point = require("./src/routes/pointRoute");
 // Require middleware
 const { authenticateToken } = require("./src/middlewares/authenticateToken");
+const { defineRole } = require("./src/middlewares/role");
 // Service
 const studentEvent = require("./src/services/socket.io/studentEvent");
 const cafeEvent = require("./src/services/socket.io/cafeEvent");
@@ -39,6 +42,9 @@ app.use(hpp());
 app.use(xssClean());
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use("/public", express.static("public"));
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "/src/views"));
 
 // Restrict all routes to only 100 requests per IP address every 1o minutes
 const limiter = rateLimit({
@@ -54,12 +60,13 @@ app.get("/", (req, res) => {
 app.use("/auth", auth);
 app.use(authenticateToken); // Every incomming request it will validate token
 app.use("/student", student);
-app.use("/cafe", cafe);
-app.use("/admin", admin);
+app.use("/cafe", defineRole(["CAFE"]), cafe);
+app.use("/admin", defineRole(["ADMIN"]), admin);
 app.use("/feedback", feedback);
+app.use("/point", point);
 
 // Socket io
-const onConnection = socket => {
+const onConnection = (socket) => {
   connectionEvent(io, socket);
   notificationEvent(io, socket);
   // STUDENT EVENTS
@@ -71,9 +78,26 @@ const onConnection = socket => {
 };
 
 // Socket.io middleware
-io.use(socketAuth);
+// io.use(socketAuth);
 io.on("connection", onConnection);
 
 apiServer.listen(port, () => {
   console.log(`listening on port ${port}`);
+});
+
+// TEST PDF
+const { generatePDF } = require("./src/utils/pdf/pdf");
+app.get("/pdf", async (req, res) => {
+  try {
+    const pdf = await generatePDF(req);
+
+    res.status(200).sendFile(pdf?.filename, {
+      headers: {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": "inline; filename=example.pdf", // use inline to view file, use attachment to download
+      },
+    });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
 });

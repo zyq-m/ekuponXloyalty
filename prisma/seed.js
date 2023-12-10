@@ -5,7 +5,7 @@ const cafeModel = require("../src/models/cafeModel");
 const prisma = new PrismaClient();
 
 async function main() {
-  const init = await initCafe();
+  const init = await initPoint();
 
   console.log(init);
 }
@@ -14,7 +14,7 @@ main()
   .then(async () => {
     await prisma.$disconnect();
   })
-  .catch(async e => {
+  .catch(async (e) => {
     console.error(e);
     await prisma.$disconnect();
     process.exit(1);
@@ -110,13 +110,12 @@ async function initPoint() {
   return await prisma.typePoint.createMany({
     data: [
       {
-        name: "Point 1",
+        name: "Cashless",
+        value: 1,
       },
       {
-        name: "Point 2",
-      },
-      {
-        name: "Point 3",
+        name: "Green Campus",
+        value: 1,
       },
     ],
   });

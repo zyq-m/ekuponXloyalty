@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cafes Transactions</title>
+    <style>
+      * {
+        font-size: 14px;
+        font-family: "Times New Roman", Times, serif;
+      }
+      img {
+        width: 100%;
+        max-width: 10rem;
+      }
+
+      h1 {
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid black;
+      }
+
+      table {
+        width: 100%;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid black;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding-top: 4px;
+        padding-bottom: 4px;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      .text-center {
+        text-align: center;
+      }
+
+      .btn-wrap {
+        display: grid;
+        place-items: center;
+        margin-top: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="pdf">
+      <img
+        src="http://localhost:3000/public/assets/logo_left.png"
+        alt="UniSZA" />
+      <h1>eKupon@UniSZA Transactions (2023-06-11-2023-07-01)</h1>
+      <table id="tf">
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Cafe Name</th>
+            <th>Cafe Address</th>
+            <th>Cafe Owners</th>
+            <th>Mobile No.</th>
+            <th>Bank Account No.</th>
+            <th>Bank Name</th>
+            <th>Transactions</th>
+            <th>Amount(RM)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% transaction.forEach((tf, i)=> { %>
+          <tr>
+            <td class="text-center"><%=i + 1%></td>
+            <td><%=tf?.name%></td>
+            <td><%=tf?.address%></td>
+            <td><%=tf?.name%></td>
+            <td class="text-center"><%=tf?.phoneNo %></td>
+            <td class="text-center"><%=tf?.accountNo %></td>
+            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center"><%=tf?.totalTransaction %></td>
+            <td class="text-center">RM<%=tf?.amount %></td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+    <div class="btn-wrap">
+      <button type="button" onclick="genPDF()">Download PDF</button>
+    </div>
+    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/jspdf-autotable@3.6.0/dist/jspdf.plugin.autotable.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.js"
+      integrity="sha512-sn/GHTj+FCxK5wam7k9w4gPPm6zss4Zwl/X9wgrvGMFbnedR8lTUSLdsolDRBRzsX6N+YgG6OWyvn9qaFVXH9w=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"></script>
+    <script>
+      function genPDF() {
+        const doc = new jspdf.jsPDF({ orientation: "l" });
+
+        // Simple html example
+        doc.addImage(
+          "/public/assets/logo_left.png",
+          "png",
+          14,
+          20,
+          42,
+          16,
+          "UniSZA",
+          "MEDIUM",
+          0
+        );
+        doc.setFontSize(14);
+        doc.text("eKupon@UniSZA Transactions (2023-06-11-2023-07-01)", 14, 46);
+        doc.autoTable({
+          html: "#tf",
+          startY: 56,
+          theme: "grid",
+          headStyles: {
+            styles: {
+              textColor: "black",
+              fillColor: [222, 222, 222],
+            },
+          },
+          footStyles: {
+            styles: {
+              textColor: "black",
+              fillColor: [252, 212, 4],
+            },
+          },
+          bodyStyles: {
+            styles: {
+              textColor: "black",
+              lineColor: "black",
+              fillColor: "white",
+            },
+          },
+        });
+
+        doc.save("table.pdf");
+      }
+    </script>
+  </body>
+</html>

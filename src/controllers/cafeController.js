@@ -1,8 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
-const jwt = require("jsonwebtoken");
-
 const { generatePDF } = require("../utils/pdf/pdf");
-const { generateToken, verify } = require("../utils/otp");
+const { generateToken } = require("../utils/otp");
+const { tWalletMany } = require("../models/transactionModel");
 
 const prisma = new PrismaClient();
 
@@ -37,11 +36,7 @@ exports.getCafe = async function getCafe(req, res) {
 
 exports.getTransaction = async (req, res) => {
   const { cafeId } = req.params;
-  const transaction = await prisma.transaction.findMany({
-    where: {
-      cafeId: cafeId,
-    },
-  });
+  const transaction = await tWalletMany("CAFE", cafeId);
 
   if (!transaction.length) {
     return res.status(404).json({ message: "Not found" });
@@ -95,12 +90,13 @@ exports.getEkuponURL = async (req, res) => {
 
   return res.status(201).json({
     data: {
-      url: url,
+      url: `${url}&name=${id.name}`,
+      name: id.name,
     },
   });
 };
 
-exports.getOTP = url => async (req, res) => {
+exports.getOTP = (url) => async (req, res) => {
   const { cafeId } = req.params;
   const id = await getCafeId(cafeId);
 
@@ -114,14 +110,68 @@ exports.getOTP = url => async (req, res) => {
     const token = generateToken(id.sale.otp);
 
     if (url) {
-      const loyaltyUrl = `${generateUrl(cafeId)}&&otp=${token}`;
-      return res.status(201).json({ data: { url: loyaltyUrl } });
+      const loyaltyUrl = `${generateUrl(cafeId)}&otp=${token}&name=${id.name}`;
+      return res.status(201).json({
+        data: {
+          url: loyaltyUrl,
+          name: id.name,
+        },
+      });
     }
 
-    return res.status(200).json({ data: { otp: token } });
+    return res.status(200).json({
+      data: {
+        otp: token,
+        remaining: 30 - Math.floor((new Date().getTime() / 1000.0) % 30),
+      },
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: error });
+  }
+};
+
+exports.profile = (update) => async (req, res) => {
+  const { cafeId } = req.params;
+
+  try {
+    const profile = await prisma.cafe.findUnique({
+      where: {
+        id: cafeId,
+      },
+      select: {
+        accountNo: true,
+        bank: true,
+      },
+    });
+
+    if (!profile) {
+      return res.status(404).send({ message: "Not found" });
+    }
+
+    if (update) {
+      const { bankName, accountNo } = req.body;
+
+      const updated = await prisma.cafe.update({
+        data: {
+          accountNo: accountNo,
+          bank: bankName,
+        },
+        where: {
+          id: cafeId,
+        },
+        select: {
+          accountNo: true,
+          bank: true,
+        },
+      });
+
+      return res.status(201).send(updated);
+    }
+
+    return res.status(200).send(profile);
+  } catch (error) {
+    return res.status(500).send(error);
   }
 };
 
@@ -132,8 +182,8 @@ async function transactionOnDate(cafeId, from, to) {
     where: {
       cafeId: cafeId,
       createdAt: {
-        lte: from,
-        gte: to,
+        gte: new Date(from),
+        lte: new Date(to),
       },
     },
   });
@@ -147,6 +197,7 @@ async function getCafeId(cafeId) {
     },
     select: {
       id: true,
+      name: true,
       sale: {
         select: {
           otp: true,

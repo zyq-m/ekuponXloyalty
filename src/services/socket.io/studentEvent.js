@@ -1,44 +1,44 @@
-const {
-  getWalletTotal,
-  getTransaction,
-  getPointTotal,
-} = require("../../models/studentModel");
+const { getWalletTotal, getPointTotal } = require("../../models/studentModel");
+const { tWalletMany, tPointMany } = require("../../models/transactionModel");
 
 module.exports = (io, socket) => {
   // Get b40 student's wallet amount & transaction
-  socket.on("student:get-wallet-total", async payload => {
+  socket.on("student:get-wallet-total", async (payload) => {
     const { matricNo } = payload;
 
     try {
       const walletTotal = await getWalletTotal(matricNo);
-      const latestTransactions = await getTransaction(true);
+      const latestTransactions = await tWalletMany("B40", matricNo, 3);
 
       if (!walletTotal) {
-        return io.emit("student:wallet-res", { message: "Not found" });
+        return io
+          .to(matricNo)
+          .emit("student:wallet-res", { message: "Not found" });
       }
 
       const res = {
-        coupon: `RM ${walletTotal.coupon}`,
-        point: walletTotal.point,
+        coupon: walletTotal.coupon,
         transaction: latestTransactions,
       };
 
-      io.emit("student:get-wallet-total", res);
+      io.to(matricNo).emit("student:get-wallet-total", res);
     } catch (error) {
-      io.emit("student:get-wallet-total", { error: error });
+      io.to(matricNo).emit("student:get-wallet-total", { error: error });
     }
   });
 
-  // Get student's point
-  socket.on("student:get-point-total", async payload => {
+  // Get student's point (NON-B40)
+  socket.on("student:get-point-total", async (payload) => {
     const { matricNo } = payload;
 
     try {
       const pointTotal = await getPointTotal(matricNo);
-      const latestTransactions = await getTransaction(false);
+      const latestTransactions = await tPointMany(matricNo, 3);
 
       if (!pointTotal) {
-        return io.emit("student:point-total", { message: "Not found" });
+        return io
+          .to(matricNo)
+          .emit("student:point-total", { message: "Not found" });
       }
 
       const res = {
@@ -46,9 +46,9 @@ module.exports = (io, socket) => {
         transaction: latestTransactions,
       };
 
-      io.emit("student:get-point-total", res);
+      io.to(matricNo).emit("student:get-point-total", res);
     } catch (error) {
-      io.emit("student:get-point-total", { error: error });
+      io.to(matricNo).emit("student:get-point-total", { error: error });
     }
   });
 };

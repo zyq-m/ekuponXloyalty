@@ -63,6 +63,7 @@ model Cafe {
   id          String        @id @db.VarChar(12)
   name        String
   accountNo   String
+  bank        String?
   user        User          @relation(fields: [userId], references: [id])
   userId      String        @unique
   sale        Sale?
@@ -81,7 +82,7 @@ model Point {
   id       String  @id @default(cuid())
   student  Student @relation(fields: [matricNo], references: [matricNo])
   matricNo String  @unique @db.VarChar(6)
-  total    Decimal @default(0.00) @db.Money
+  total    Int     @default(0) @db.Integer
 }
 
 model CouponHistory {
@@ -96,7 +97,7 @@ model PointHistory {
   id        String   @id @default(cuid())
   student   Student  @relation(fields: [matricNo], references: [matricNo])
   matricNo  String   @db.VarChar(6)
-  total     Decimal  @default(0.00) @db.Money
+  total     Int      @default(0) @db.Integer
   updatedAt DateTime @default(now())
 }
 
@@ -117,39 +118,41 @@ model SaleHistory {
 }
 
 model Transaction {
-  id                String    @id @default(cuid())
-  cafe              Cafe      @relation(fields: [cafeId], references: [id])
-  cafeId            String    @db.VarChar(12)
-  student           Student   @relation(fields: [matricNo], references: [matricNo])
-  matricNo          String    @db.VarChar(6)
-  amount            Decimal   @db.Money
-  createdAt         DateTime  @default(now())
-  claim             Claim[]
-  walletTransaction TWallet[]
-  pointTransaction  TPoint[]
+  id                String   @id @default(cuid())
+  cafe              Cafe     @relation(fields: [cafeId], references: [id])
+  cafeId            String   @db.VarChar(12)
+  student           Student  @relation(fields: [matricNo], references: [matricNo])
+  matricNo          String   @db.VarChar(6)
+  createdAt         DateTime @default(dbgenerated("CURRENT_DATE")) @db.Date
+  createdOn         DateTime @default(now()) @db.Timestamp()
+  claim             Claim?
+  walletTransaction TWallet?
+  pointTransaction  TPoint?
 }
 
 model Claim {
-  id            String      @id @default(cuid())
-  transaction   Transaction @relation(fields: [transactionId], references: [id])
-  transactionId String
-  claimed       Boolean     @default(false)
-  claimedAt     DateTime    @default(now())
-  admin         Admin       @relation(fields: [markedBy], references: [email])
-  markedBy      String      @db.VarChar(255)
+  id              String      @id @default(cuid())
+  transaction     Transaction @relation(fields: [transactionId], references: [id])
+  transactionId   String      @unique
+  claimed         Boolean     @default(false)
+  claimedAt       DateTime?
+  admin           Admin?      @relation(fields: [markedBy], references: [email])
+  markedBy        String?     @db.VarChar(255)
+  transactionType String?     @db.VarChar(255)
 }
 
 model TWallet {
   id            String      @id @default(cuid())
   transaction   Transaction @relation(fields: [transactionId], references: [id])
-  transactionId String
+  transactionId String      @unique
   approved      Boolean     @default(false)
+  amount        Decimal     @db.Money
 }
 
 model TPoint {
   id            String      @id @default(cuid())
   transaction   Transaction @relation(fields: [transactionId], references: [id])
-  transactionId String
+  transactionId String      @unique
   point         TypePoint   @relation(fields: [pointId], references: [id])
   pointId       Int
 }
@@ -157,6 +160,7 @@ model TPoint {
 model TypePoint {
   id               Int      @id @default(autoincrement())
   name             String   @db.VarChar(20)
+  value            Int
   pointTransaction TPoint[]
 }
 

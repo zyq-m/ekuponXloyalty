@@ -124,7 +124,7 @@ axios.get("/admin/cafe");
 }
 
 // Get student transactions (coupon)
-axios.get("/admin/student/transactions");
+axios.get("/admin/student/transactions/123456");
 // response
 {
   data: [
@@ -146,7 +146,7 @@ axios.get("/admin/student/transactions");
 }
 
 // Get cafe transaction (coupon)
-axios.get("/admin/cafe/transactions");
+axios.get("/admin/cafe/transactions/cafe1");
 // response
 {
   data: [
@@ -168,7 +168,7 @@ axios.get("/admin/cafe/transactions");
 }
 
 // Get point transactions
-axios.get("/admin/student/points", {
+axios.get("/admin/student/points/123456", {
     b40: true, // true or false
 });
 // response
@@ -190,6 +190,48 @@ axios.get("/admin/student/points", {
   ...
   ]
 }
+
+// Get cafe transaction report
+axios.get("/admin/report/transaction/:from/:to"); // eg. /admin/report/transaction/2023-11-29/2023-11-29
+// response
+// {
+//   "transaction": [
+//     {
+//       "id": "Elias51",
+//       "name": "Shaun Hilll Sr.",
+//       "cafeName": "Cafe Hershel",
+//       "accountNo": "02803392",
+//       "bank": null,
+//       "totalTransaction": 3,
+//       "totalAmount": "5"
+//     },
+//     {
+//       "id": "Jammie34",
+//       "name": "Danny Sipes II",
+//       "cafeName": "Cafe Gussie",
+//       "accountNo": "56820669",
+//       "bank": null,
+//       "totalTransaction": 3,
+//       "totalAmount": "5"
+//     },
+//     {
+//       "id": "Ray86",
+//       "name": "Viola Koss",
+//       "cafeName": "Cafe Rowland",
+//       "accountNo": "85738933",
+//       "bank": null,
+//       "totalTransaction": 3,
+//       "totalAmount": "5"
+//     }
+//   ]
+// }
+
+// Get cafe transaction report
+axios.get("/admin/report/transaction/pdf/:from/:to"); // eg. /admin/report/transaction/pdf/2023-11-29/2023-11-29
+// response
+// return html
+// jadikan link
+
 ```
 
 #### Post request
@@ -227,6 +269,7 @@ axios.post("/admin/user/register/cafe", {
     name, // string
     phoneNo, // string
     address, // string
+    password, // string
 });
 // response
 {
@@ -237,6 +280,16 @@ axios.post("/admin/user/register/cafe", {
 
 // Register admin
 // Coming soon...
+
+// Verify claim
+axios.post("/admin/cafe/claim", {
+  from: "2023-11-27",
+  to: "2023-11-30",
+  email: "admin123@gmail.com" // admin's email
+})
+// response
+// 201 status
+
 ```
 
 #### Put request
@@ -268,7 +321,7 @@ axios.put("/admin/student/wallet", {
 
 ```javascript
 // Get student by matric no
-axios.get("/student/123456)
+axios.get("/student/123456")
 // response
 {
   "data": {
@@ -336,7 +389,7 @@ axios.get('/student/transaction/point/from/to/123456')
 
 ```javascript
 // Pay (coupon)
-axios.get("/student/pay", {
+axios.post("/student/pay", {
   matricNo: string,
   cafeId: string,
   amount: int,
@@ -351,7 +404,7 @@ axios.get("/student/pay", {
 }
 
 // Collect points
-axios.get("/student/pay", {
+axios.post("/student/pay", {
   matricNo: string,
   cafeId: string,
   amount: int,
@@ -463,7 +516,7 @@ axios.get("/feedback", {
 ### Websocket Events
 
 ```javascript
-io.on("admin:get-overall", data => {
+io.on("admin:get-overall", (data) => {
   // data response
   // {
   //   student: 4,
