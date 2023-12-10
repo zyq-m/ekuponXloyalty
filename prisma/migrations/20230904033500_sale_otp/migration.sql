@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Sale" ALTER COLUMN "otp" SET DATA TYPE TEXT;
