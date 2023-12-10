@@ -6,7 +6,6 @@ exports.checkBalance = async (req, res, next) => {
   const { matricNo, amount } = req.body;
 
   const date = new Date();
-  date.setDate(date.getDate() + 1);
 
   const transactionToday = await prisma.tWallet.aggregate({
     _sum: {
@@ -38,8 +37,6 @@ exports.checkBalance = async (req, res, next) => {
   const total = transactionToday._sum.amount;
   const totalSpendToday = !total ? 0 : +total;
   const spend = totalSpendToday + +amount;
-
-  console.log(totalSpendToday, spend, date);
 
   if (spend <= 6) {
     next();

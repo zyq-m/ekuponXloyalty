@@ -35,6 +35,7 @@ router.post("/user/register/cafe", adminController.registerCafe);
 router.post("/user/register/admin");
 
 // Transaction
+router.get("/report/transaction", adminController.getReport(false, true));
 router.get("/report/transaction/:from/:to", adminController.getReport(false));
 router.get(
   "/report/transaction/pdf/:from/:to",

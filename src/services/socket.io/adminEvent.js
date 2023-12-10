@@ -3,7 +3,7 @@ const cafeModel = require("../../models/cafeModel");
 const transactionModel = require("../../models/transactionModel");
 
 module.exports = (io, socket) => {
-  io.on("admin:get-overall", async () => {
+  socket.on("admin:get-overall", async () => {
     // Get overall student, cafe & transaction
     const student = studentModel.total();
     const cafe = cafeModel.total();

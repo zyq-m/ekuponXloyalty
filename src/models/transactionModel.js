@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 // Count total of transaction made
 exports.totalCoupon = async () => {
-  return await prisma.coupon.count();
+  return await prisma.tWallet.count();
 };
 
 // Count total of point made

@@ -117,7 +117,7 @@ exports.suspendUser = async (req, res) => {
   }
 };
 
-exports.getReport = (pdf) => async (req, res) => {
+exports.getReport = (pdf, all) => async (req, res) => {
   const { from, to } = req.params;
   BigInt.prototype.toJSON = function () {
     const int = Number.parseInt(this.toString());
@@ -125,7 +125,13 @@ exports.getReport = (pdf) => async (req, res) => {
   };
 
   try {
-    const report = await overallCafeTransaction(from, to);
+    let report;
+
+    if (all) {
+      report = await overallCafeTransaction({ all });
+    } else {
+      report = await overallCafeTransaction({ from, to });
+    }
 
     if (!report.length) {
       return res.status(404).send({ message: "Transaction not found" });
@@ -148,7 +154,7 @@ exports.claimTransaction = async (req, res) => {
 
   try {
     // update total (sale table)
-    const transactionReport = await overallCafeTransaction(from, to);
+    const transactionReport = await overallCafeTransaction({ from, to });
 
     if (!transactionReport.length) {
       return res.status(404).send({ message: "Transaction not found" });
@@ -203,7 +209,18 @@ exports.claimTransaction = async (req, res) => {
   }
 };
 
-const overallCafeTransaction = async (from, to) => {
+const overallCafeTransaction = async ({ from, to, all }) => {
+  if (all) {
+    return await prisma.$queryRaw`
+    select c.id, p.name, c.name "cafeName", c."accountNo", c.bank, count(t.id) "totalTransaction", sum(tw.amount) "totalAmount" 
+    from "TWallet" tw 
+    inner join "Transaction" t on t.id = tw."transactionId" 
+    inner join "Claim" cm on tw."transactionId" = cm."transactionId" 
+    inner join "Cafe" c on c.id = t."cafeId" 
+    inner join "Profile" p on p."userId" = c."userId" 
+    where cm.claimed = false
+    group by c.name, c.id, p.name`;
+  }
   const dateFrom = new Date(from);
   const dateTo = new Date(to);
 
@@ -220,7 +237,6 @@ const overallCafeTransaction = async (from, to) => {
     inner join "Cafe" c on c.id = t."cafeId" 
     inner join "Profile" p on p."userId" = c."userId" 
     where cm.claimed = false
-    and t."createdAt" >= ${dateFrom}
-    and t."createdAt" < ${dateTo}
+    and t."createdAt" >= ${dateFrom} and t."createdAt" < ${dateTo}
     group by c.name, c.id, p.name`;
 };
