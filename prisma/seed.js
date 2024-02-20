@@ -5,7 +5,7 @@ const cafeModel = require("../src/models/cafeModel");
 const prisma = new PrismaClient();
 
 async function main() {
-  const init = await initPoint();
+  const init = await initStudent();
 
   console.log(init);
 }
@@ -33,8 +33,8 @@ async function initStudent() {
           profile: {
             create: {
               name: fake.name,
-              phoneNo: fake.phoneNo,
-              address: fake.address,
+              // phoneNo: fake.phoneNo,
+              // address: fake.address,
             },
           },
 

@@ -50,6 +50,7 @@
   <body>
     <div id="pdf">
       <img
+        id="img"
         src="http://localhost:3000/public/assets/logo_left.png"
         alt="UniSZA" />
       <h1>eKupon@UniSZA Transactions (2023-06-11-2023-07-01)</h1>
@@ -97,10 +98,11 @@
     <script>
       function genPDF() {
         const doc = new jspdf.jsPDF({ orientation: "l" });
+        const img = document.getElementById('img').getAttribute('src')
 
         // Simple html example
         doc.addImage(
-          "/public/assets/logo_left.png",
+          img,
           "png",
           14,
           20,
