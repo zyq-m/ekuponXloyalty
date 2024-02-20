@@ -25,9 +25,10 @@ model User {
 }
 
 model Role {
-  id   Int    @id @default(autoincrement())
-  name String @db.VarChar(15)
-  user User[]
+  id        Int         @id @default(autoincrement())
+  name      String      @db.VarChar(15)
+  user      User[]
+  limtSpend LimitSpend?
 }
 
 model Profile {
@@ -177,4 +178,11 @@ model UserToken {
   token     String   @id
   mark      String   @default("token")
   createdAt DateTime @default(now())
+}
+
+model LimitSpend {
+  id     Int  @id @default(autoincrement())
+  role   Role @relation(fields: [roleId], references: [id])
+  roleId Int  @unique
+  limit  Int
 }
