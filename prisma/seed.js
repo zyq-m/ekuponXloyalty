@@ -75,20 +75,19 @@ async function initRole() {
   await prisma.role.createMany({
     data: [
       {
-        id: 1,
         name: "B40",
       },
       {
-        id: 2,
         name: "NON-B40",
       },
       {
-        id: 3,
         name: "ADMIN",
       },
       {
-        id: 4,
         name: "CAFE",
+      },
+      {
+        name: "MAIDAM",
       },
     ],
   });
