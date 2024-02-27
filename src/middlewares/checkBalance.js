@@ -32,23 +32,25 @@ exports.checkBalance = async (req, res, next) => {
     },
   });
 
-  if (coupon.total < 2) {
-    return res.status(406).send({ message: "Insufficient amount" });
-  }
-
   const total = transactionToday._sum.amount;
   const totalSpendToday = !total ? 0 : +total;
   const spend = totalSpendToday + +amount;
   const roleId = req.user?.roleId;
   const spendLimit = await getLimit(roleId);
 
-  console.log({
-    total,
-    date,
-    now,
-  });
+  // console.log({
+  //   spend,
+  //   total,
+  //   date,
+  //   now,
+  //   coupon: coupon.total,
+  // });
 
-  if (spend <= spendLimit.limit) {
+  if (+amount > coupon.total) {
+    return res.status(406).send({ message: "Insufficient amount" });
+  }
+
+  if (spend <= +spendLimit.limit) {
     next();
   } else {
     // When spend exceeds spend limit, reject requests
