@@ -26,7 +26,6 @@ async function initStudent() {
     data: {
       matricNo: fake.matricNo,
       icNo: fake.icNo,
-      b40: b40,
 
       user: {
         create: {
@@ -78,7 +77,7 @@ async function initRole() {
         name: "B40",
       },
       {
-        name: "NON-B40",
+        name: "PAYNET",
       },
       {
         name: "ADMIN",
