@@ -4,11 +4,13 @@ const { tWalletMany, tPointMany } = require("../../models/transactionModel");
 module.exports = (io, socket) => {
   // Get b40 student's wallet amount & transaction
   socket.on("student:get-wallet-total", async (payload) => {
-    const { matricNo } = payload;
+    const { matricNo, role } = payload;
 
     try {
-      const walletTotal = await getWalletTotal(matricNo);
-      const latestTransactions = await tWalletMany("B40", matricNo, 3);
+      const [walletTotal, latestTransactions] = await Promise.allSettled([
+        getWalletTotal(matricNo),
+        tWalletMany(role, matricNo, 3),
+      ]);
 
       if (!walletTotal) {
         return io
@@ -17,12 +19,13 @@ module.exports = (io, socket) => {
       }
 
       const res = {
-        coupon: walletTotal.coupon,
-        transaction: latestTransactions,
+        coupon: walletTotal.value.coupon,
+        transaction: latestTransactions.value,
       };
 
       io.to(matricNo).emit("student:get-wallet-total", res);
     } catch (error) {
+      console.error(error);
       io.to(matricNo).emit("student:get-wallet-total", { error: error });
     }
   });

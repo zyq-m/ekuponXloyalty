@@ -105,7 +105,8 @@ exports.createPointTransaction = async (matricNo, cafeId, amount, pointId) => {
 };
 
 exports.tWalletMany = async (role, id, take) => {
-  const config = role === "B40" ? { matricNo: id } : { cafeId: id };
+  const config =
+    role === "B40" || role === "MAIDAM" ? { matricNo: id } : { cafeId: id };
 
   return await prisma.tWallet.findMany({
     where: {
@@ -125,7 +126,7 @@ exports.tWalletMany = async (role, id, take) => {
     take: take,
     orderBy: {
       transaction: {
-        createdAt: "desc",
+        createdOn: "desc",
       },
     },
   });

@@ -187,7 +187,6 @@ exports.getUserId = async (matricNo) => {
 exports.getWalletTotal = async (matricNo) => {
   return await prisma.student.findUnique({
     where: {
-      b40: true,
       matricNo: matricNo,
     },
     select: {
