@@ -50,7 +50,6 @@ model Admin {
 model Student {
   matricNo      String          @id @db.VarChar(6)
   icNo          String          @unique @db.VarChar(12)
-  b40           Boolean         @default(false)
   user          User            @relation(fields: [userId], references: [id])
   userId        String          @unique
   coupon        Coupon?
