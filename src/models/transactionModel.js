@@ -77,6 +77,7 @@ exports.createPointTransaction = async (matricNo, cafeId, amount, pointId) => {
     data: {
       transactionId: transaction.id,
       pointId: +pointId,
+      amount: +amount,
     },
   });
   await prisma.claim.create({
@@ -105,9 +106,31 @@ exports.createPointTransaction = async (matricNo, cafeId, amount, pointId) => {
 };
 
 exports.tWalletMany = async (role, id, take) => {
-  const config = role === "B40" ? { matricNo: id } : { cafeId: id };
+  const config =
+    role === "B40" || role === "MAIDAM"
+      ? {
+          matricNo: id,
+          claim: {
+            claimed: false,
+          },
+        }
+      : {
+          cafeId: id,
+          claim: {
+            claimed: false,
+          },
+        };
 
-  return await prisma.tWallet.findMany({
+  const summary = await prisma.tWallet.aggregate({
+    where: {
+      transaction: config,
+    },
+    _sum: {
+      amount: true,
+    },
+  });
+
+  const transactions = await prisma.tWallet.findMany({
     where: {
       transaction: config,
     },
@@ -125,17 +148,94 @@ exports.tWalletMany = async (role, id, take) => {
     take: take,
     orderBy: {
       transaction: {
-        createdAt: "desc",
+        createdOn: "desc",
       },
     },
   });
+
+  return { data: transactions, summary: summary };
+};
+
+exports.tWalletManyByDate = async (role, id, from, to) => {
+  const config =
+    role === "B40" || role === "MAIDAM"
+      ? {
+          matricNo: id,
+          claim: {
+            claimed: false,
+          },
+          createdAt: {
+            gte: new Date(from),
+            lte: new Date(to),
+          },
+        }
+      : {
+          cafeId: id,
+          claim: {
+            claimed: false,
+          },
+          createdAt: {
+            gte: new Date(from),
+            lte: new Date(to),
+          },
+        };
+
+  const summary = await prisma.tWallet.aggregate({
+    where: {
+      transaction: config,
+    },
+    _sum: {
+      amount: true,
+    },
+  });
+
+  const transactions = await prisma.tWallet.findMany({
+    where: {
+      transaction: config,
+    },
+    include: {
+      transaction: {
+        include: {
+          cafe: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      transaction: {
+        createdOn: "desc",
+      },
+    },
+  });
+
+  return { data: transactions, summary: summary };
 };
 
 exports.tPointMany = async (id, take) => {
-  return await prisma.tPoint.findMany({
+  const summary = await prisma.tPoint.aggregate({
     where: {
       transaction: {
         matricNo: id,
+        claim: {
+          claimed: false,
+        },
+      },
+    },
+    _sum: {
+      amount: true,
+    },
+  });
+
+  const transactions = await prisma.tPoint.findMany({
+    where: {
+      transaction: {
+        matricNo: id,
+        claim: {
+          claimed: false,
+        },
       },
     },
     include: {
@@ -165,4 +265,68 @@ exports.tPointMany = async (id, take) => {
       },
     },
   });
+
+  return { data: transactions, summary: summary };
+};
+
+exports.tPointManyByDate = async (id, from, to) => {
+  const summary = await prisma.tPoint.aggregate({
+    where: {
+      transaction: {
+        matricNo: id,
+        claim: {
+          claimed: false,
+        },
+        createdAt: {
+          gte: new Date(from),
+          lte: new Date(to),
+        },
+      },
+    },
+    _sum: {
+      amount: true,
+    },
+  });
+
+  const transactions = await prisma.tPoint.findMany({
+    where: {
+      transaction: {
+        matricNo: id,
+        claim: {
+          claimed: false,
+        },
+        createdAt: {
+          gte: new Date(from),
+          lte: new Date(to),
+        },
+      },
+    },
+    include: {
+      transaction: {
+        include: {
+          cafe: {
+            select: {
+              name: true,
+            },
+          },
+          pointTransaction: {
+            select: {
+              point: {
+                select: {
+                  value: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      transaction: {
+        createdAt: "desc",
+      },
+    },
+  });
+
+  return { data: transactions, summary: summary };
 };

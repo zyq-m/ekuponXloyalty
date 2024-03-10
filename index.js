@@ -15,6 +15,7 @@ const admin = require("./src/routes/adminRoute");
 const feedback = require("./src/routes/feedbackRoute");
 const auth = require("./src/routes/authRoute");
 const point = require("./src/routes/pointRoute");
+const limitSpend = require("./src/routes/limitSpendRoute");
 // Require middleware
 const { authenticateToken } = require("./src/middlewares/authenticateToken");
 const { defineRole } = require("./src/middlewares/role");
@@ -61,9 +62,10 @@ app.use("/auth", auth);
 app.use(authenticateToken); // Every incomming request it will validate token
 app.use("/student", student);
 app.use("/cafe", defineRole(["CAFE"]), cafe);
-app.use("/admin", defineRole(["ADMIN"]), admin);
+app.use("/admin", admin);
 app.use("/feedback", feedback);
 app.use("/point", point);
+app.use("/limit", defineRole(["ADMIN"]), limitSpend);
 
 // Socket io
 const onConnection = (socket) => {

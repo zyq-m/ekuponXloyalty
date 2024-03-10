@@ -109,37 +109,40 @@ exports.getTransaction = function (wallet) {
       transaction = await transactionModel.tPointMany(matricNo);
     }
 
-    if (!transaction.length) {
+    if (!transaction.data.length) {
       return res.status(404).json({ message: "Not found" });
     }
 
-    return res.status(200).json({ data: transaction });
+    return res.status(200).json(transaction);
   };
 };
 
 // Get transaction by date
 exports.getTransactionRange = function (wallet) {
   return async function (req, res) {
-    const { matricNo, from, to } = req.params;
-    const options = wallet
-      ? { walletTransaction: true }
-      : { pointTransaction: true };
-    const transaction = await prisma.transaction.findMany({
-      where: {
-        matricNo: matricNo,
-        createdAt: {
-          lte: new Date(from),
-          gte: new Date(to),
-        },
-      },
-      include: options,
-    });
+    const { matric, from, to } = req.params;
+    let transaction;
 
-    if (!transaction.length) {
-      return res.status(404).json({ message: "Not found" });
+    try {
+      if (wallet) {
+        transaction = await transactionModel.tWalletManyByDate(
+          "B40",
+          matric,
+          from,
+          to
+        );
+      } else {
+        transaction = await transactionModel.tPointManyByDate(matric, from, to);
+      }
+
+      if (!transaction.data.length) {
+        return res.status(404).json({ message: "Not found" });
+      }
+
+      return res.status(200).json(transaction);
+    } catch (error) {
+      return res.status(500).json(error);
     }
-
-    return res.status(200).json({ data: transaction });
   };
 };
 

@@ -1,7 +1,10 @@
 const { PrismaClient } = require("@prisma/client");
 const { generatePDF } = require("../utils/pdf/pdf");
 const { generateToken } = require("../utils/otp");
-const { tWalletMany } = require("../models/transactionModel");
+const {
+  tWalletMany,
+  tWalletManyByDate,
+} = require("../models/transactionModel");
 
 const prisma = new PrismaClient();
 
@@ -38,22 +41,22 @@ exports.getTransaction = async (req, res) => {
   const { cafeId } = req.params;
   const transaction = await tWalletMany("CAFE", cafeId);
 
-  if (!transaction.length) {
+  if (!transaction.data.length) {
     return res.status(404).json({ message: "Not found" });
   }
 
-  return res.status(200).json({ data: transaction });
+  return res.status(200).json(transaction);
 };
 
 exports.getTransactionRange = async (req, res) => {
   const { cafeId, from, to } = req.params;
-  const transaction = await transactionOnDate(cafeId, from, to);
+  const transaction = await tWalletManyByDate("CAFE", cafeId, from, to);
 
-  if (!transaction.length) {
+  if (!transaction.data.length) {
     return res.status(404).json({ message: "Not found" });
   }
 
-  return res.status(200).json({ data: transaction });
+  return res.status(200).json(transaction);
 };
 
 exports.getTransactionPdf = async (req, res) => {
@@ -178,12 +181,33 @@ exports.profile = (update) => async (req, res) => {
 // HELPER
 // Get transaction by date
 async function transactionOnDate(cafeId, from, to) {
-  return await prisma.transaction.findMany({
+  return await prisma.tWallet.findMany({
     where: {
-      cafeId: cafeId,
-      createdAt: {
-        gte: new Date(from),
-        lte: new Date(to),
+      transaction: {
+        cafeId: cafeId,
+        createdAt: {
+          gte: new Date(from),
+          lte: new Date(to),
+        },
+        claim: {
+          claimed: false,
+        },
+      },
+    },
+    include: {
+      transaction: {
+        include: {
+          cafe: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      transaction: {
+        createdOn: "desc",
       },
     },
   });

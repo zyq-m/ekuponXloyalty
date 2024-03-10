@@ -26,7 +26,6 @@ async function initStudent() {
     data: {
       matricNo: fake.matricNo,
       icNo: fake.icNo,
-      b40: b40,
 
       user: {
         create: {
@@ -75,20 +74,19 @@ async function initRole() {
   await prisma.role.createMany({
     data: [
       {
-        id: 1,
         name: "B40",
       },
       {
-        id: 2,
-        name: "NON-B40",
+        name: "PAYNET",
       },
       {
-        id: 3,
         name: "ADMIN",
       },
       {
-        id: 4,
         name: "CAFE",
+      },
+      {
+        name: "MAIDAM",
       },
     ],
   });
