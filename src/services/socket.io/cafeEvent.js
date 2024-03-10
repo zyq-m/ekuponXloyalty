@@ -11,7 +11,7 @@ module.exports = (io, socket) => {
       const latestTransactions = await tWalletMany(role, cafeId, 3);
       const res = {
         total: totalSales.total,
-        transaction: latestTransactions,
+        transaction: latestTransactions.data,
       };
 
       io.to(cafeId).emit("cafe:get-sales-total", res);

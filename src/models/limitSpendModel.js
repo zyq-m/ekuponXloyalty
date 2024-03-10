@@ -9,3 +9,22 @@ exports.getLimit = async (roleId) => {
     },
   });
 };
+
+exports.getAllLimit = async () => {
+  return prisma.limitSpend.findMany({
+    include: {
+      role: true,
+    },
+  });
+};
+
+exports.updateLimit = async (limit, roleId) => {
+  return prisma.limitSpend.update({
+    data: {
+      limit: limit,
+    },
+    where: {
+      roleId: roleId,
+    },
+  });
+};

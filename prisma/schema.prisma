@@ -155,6 +155,7 @@ model TPoint {
   transactionId String      @unique
   point         TypePoint   @relation(fields: [pointId], references: [id])
   pointId       Int
+  amount        Int
 }
 
 model TypePoint {

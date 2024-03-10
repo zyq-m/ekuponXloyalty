@@ -20,7 +20,7 @@ module.exports = (io, socket) => {
 
       const res = {
         coupon: walletTotal.value.coupon,
-        transaction: latestTransactions.value,
+        transaction: latestTransactions.value.data,
       };
 
       io.to(matricNo).emit("student:get-wallet-total", res);
