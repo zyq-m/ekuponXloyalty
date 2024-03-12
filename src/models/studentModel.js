@@ -55,7 +55,7 @@ exports.save = async (options) => {
   return await prisma.student.create(config);
 };
 
-exports.getStudent = async (matricNo) => {
+exports.getStudent = async (matricNo, role) => {
   if (matricNo) {
     return await prisma.student.findUnique({
       where: {
@@ -79,6 +79,13 @@ exports.getStudent = async (matricNo) => {
   }
 
   return await prisma.student.findMany({
+    where: {
+      user: {
+        role: {
+          name: role,
+        },
+      },
+    },
     include: {
       user: {
         select: {
@@ -161,7 +168,9 @@ exports.updateCoupon = async (matricNo, amount) => {
     where: {
       matricNo: matricNo,
       student: {
-        b40: true,
+        user: {
+          roleId: 1,
+        },
       },
     },
   });

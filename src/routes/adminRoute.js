@@ -6,7 +6,9 @@ const adminController = require("../controllers/adminController");
 const router = express.Router();
 
 // Get all students
-router.get("/student", adminController.getStudent);
+router.get("/student/ekupon", adminController.getStudent("B40"));
+router.get("/student/paynet", adminController.getStudent("PAYNET"));
+router.get("/student/maidam", adminController.getStudent("MAIDAM"));
 // Get all cafe
 router.get("/cafe", adminController.getCafe);
 
@@ -17,6 +19,10 @@ router.get(
   adminController.getWalletTransaction
 );
 router.get("/cafe/transactions/:cafeId", adminController.getTransactionCafe);
+router.get(
+  "/cafe/transactions/:cafeId/:from/:to",
+  adminController.getTransactionByDate
+);
 // Get student points (non-b40)
 router.get("/student/points/:matricNo", adminController.getPointTransaction);
 

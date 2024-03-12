@@ -25,14 +25,31 @@ exports.registerCafe = async (req, res) => {
   }
 };
 
-exports.getStudent = async (req, res) => {
-  const student = await studentModel.getStudent();
+exports.getStudent = (role) => {
+  return async (req, res) => {
+    let student;
 
-  if (!student.length) {
-    return res.status(404).send({ message: "Not found" });
-  }
+    try {
+      if (role === "B40") {
+        student = await studentModel.getStudent(null, "B40");
+      }
+      if (role === "PAYNET") {
+        student = await studentModel.getStudent(null, "PAYNET");
+      }
+      if (role === "MAIDAM") {
+        student = await studentModel.getStudent(null, "MAIDAM");
+      }
 
-  return res.status(200).send({ data: student });
+      if (!student?.length) {
+        return res.status(404).send({ message: "Not found" });
+      }
+
+      return res.status(200).send({ data: student });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send({ message: error.message });
+    }
+  };
 };
 
 exports.getCafe = async (req, res) => {
@@ -61,11 +78,11 @@ exports.getWalletTransaction = async (req, res) => {
   try {
     const data = await transactionModel.tWalletMany("B40", matricNo, undefined);
 
-    if (!data.length) {
+    if (!data.data.length) {
       return res.status(404).send({ message: "Not found" });
     }
 
-    return res.status(200).send({ data: data });
+    return res.status(200).send(data);
   } catch (error) {
     return res.status(500).send({ error: error });
   }
@@ -75,11 +92,11 @@ exports.getTransactionCafe = async (req, res) => {
   const { cafeId } = req.params;
   const data = await transactionModel.tWalletMany("CAFE", cafeId, undefined);
 
-  if (!data.length) {
+  if (!data.data.length) {
     return res.status(404).send({ message: "Not found" });
   }
 
-  return res.status(200).send({ data: data });
+  return res.status(200).send(data);
 };
 
 exports.updateWallet = async (req, res) => {
@@ -90,8 +107,25 @@ exports.updateWallet = async (req, res) => {
 
     return res.status(200).send({ data: coupon });
   } catch (error) {
+    console.log(error);
     return res.status(400).send({ message: error });
   }
+};
+
+exports.getTransactionByDate = async (req, res) => {
+  const { cafeId, from, to } = req.params;
+  const transaction = await transactionModel.tWalletManyByDate(
+    "CAFE",
+    cafeId,
+    from,
+    to
+  );
+
+  if (!transaction.data.length) {
+    return res.status(404).send({ message: "Not found" });
+  }
+
+  return res.status(200).send(transaction);
 };
 
 exports.suspendUser = async (req, res) => {
