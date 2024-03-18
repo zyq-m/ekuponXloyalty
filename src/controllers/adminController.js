@@ -293,7 +293,6 @@ exports.generateQR = async (req, res) => {
 
     archive.pipe(res);
     archive.directory(path.join("uploads/qr"), false);
-    // res.sendStatus(201);
     archive.finalize();
   } catch (error) {
     console.log(error);

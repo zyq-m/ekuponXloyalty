@@ -49,6 +49,6 @@ router.get(
 );
 
 // Cafe's QR Code
-router.post("/qr", adminController.generateQR);
+router.get("/qr", adminController.generateQR);
 
 module.exports = router;
