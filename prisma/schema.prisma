@@ -60,15 +60,18 @@ model Student {
 }
 
 model Cafe {
-  id          String        @id @db.VarChar(12)
-  name        String
-  accountNo   String
-  bank        String?
-  user        User          @relation(fields: [userId], references: [id])
-  userId      String        @unique
-  sale        Sale?
-  transaction Transaction[]
-  saleHistory SaleHistory[]
+  id            String        @id @db.VarChar(12)
+  name          String
+  accountNo     String
+  bank          String?
+  premise       String?
+  registerNo    String?       @unique
+  effectiveDate DateTime?     @db.Date
+  user          User          @relation(fields: [userId], references: [id])
+  userId        String        @unique
+  sale          Sale?
+  transaction   Transaction[]
+  saleHistory   SaleHistory[]
 }
 
 model Coupon {

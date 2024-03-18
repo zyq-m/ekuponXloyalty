@@ -1,7 +1,11 @@
+const archiver = require("archiver");
 const { PrismaClient } = require("@prisma/client");
+const path = require("path");
 const studentModel = require("../models/studentModel");
 const cafeModel = require("../models/cafeModel");
 const transactionModel = require("../models/transactionModel");
+const { createQR } = require("../utils/qrGenerator");
+const { generateUrl } = require("../utils/generateURL");
 
 const prisma = new PrismaClient();
 
@@ -273,4 +277,26 @@ const overallCafeTransaction = async ({ from, to, all }) => {
     where cm.claimed = false
     and t."createdAt" >= ${dateFrom} and t."createdAt" < ${dateTo}
     group by c.name, c.id, p.name`;
+};
+
+exports.generateQR = async (req, res) => {
+  try {
+    const cafes = await cafeModel.getCafe();
+    cafes.forEach((cafe) => {
+      createQR(generateUrl(cafe.id), cafe.name);
+    });
+
+    const archive = archiver("zip");
+
+    res.setHeader("Content-Type", "application/zip");
+    res.setHeader("Content-Disposition", "attachment; filename=CafeQR.zip");
+
+    archive.pipe(res);
+    archive.directory(path.join("uploads/qr"), false);
+    // res.sendStatus(201);
+    archive.finalize();
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
 };
