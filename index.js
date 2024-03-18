@@ -103,3 +103,30 @@ app.get("/pdf", async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 });
+
+const xlsx = require("xlsx");
+app.get("/sheet", async (req, res) => {
+  const worksheet = xlsx.readFile("file.xlsx");
+  const json = xlsx.utils.sheet_to_json(
+    worksheet.Sheets[worksheet.SheetNames[1]],
+    { header: 1 }
+  );
+
+  const header = ["id", "matricNo", "icNo", "name", "program", "faculty"];
+  // const header = json[2];
+  const result = json.slice(3).map((row) => {
+    const rowData = {};
+    header.forEach((val, i) => {
+      rowData[val] = row[i];
+    });
+    return rowData;
+  });
+
+  res.status(200).send(result);
+});
+
+const { createQr } = require("./src/utils/qrGenerator");
+app.get("/qr", async (req, res) => {
+  createQr("https://www.npmjs.com/package/qrcode", "test qr");
+  res.sendStatus(201);
+});
