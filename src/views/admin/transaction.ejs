@@ -76,9 +76,9 @@
             <td><%=tf?.name%></td>
             <td class="text-center"><%=tf?.phoneNo %></td>
             <td class="text-center"><%=tf?.accountNo %></td>
-            <td class="text-center">Bank Rakyat</td>
+            <td class="text-center"><%=tf?.bank %></td>
             <td class="text-center"><%=tf?.totalTransaction %></td>
-            <td class="text-center">RM<%=tf?.amount %></td>
+            <td class="text-center">RM<%=tf?.totalAmount %></td>
           </tr>
           <% }); %>
         </tbody>
