@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const transactionModel = require("../models/transactionModel");
+const { getRole } = require("../utils/role");
 
 const prisma = new PrismaClient();
 
@@ -32,13 +33,16 @@ exports.getStudent = async function (req, res) {
 // Make payment
 exports.makePayment = async function (req, res) {
   const { matricNo, cafeId, amount } = req.body;
+  const roleId = req.user?.roleId;
 
   try {
+    const role = await getRole(roleId);
     // Create record in table
     const wallet = await transactionModel.createWalletTransaction(
       matricNo,
       cafeId,
-      amount
+      amount,
+      role.name
     );
 
     if (!wallet) {
@@ -47,6 +51,7 @@ exports.makePayment = async function (req, res) {
 
     return res.status(201).send({ data: wallet });
   } catch (error) {
+    console.error(error);
     return res.status(500).send({ error: error });
   }
 };

@@ -12,7 +12,12 @@ exports.totalPoint = async () => {
   return await prisma.tPoint.count();
 };
 
-exports.createWalletTransaction = async (matricNo, cafeId, amount) => {
+exports.createWalletTransaction = async (
+  matricNo,
+  cafeId,
+  amount,
+  fundType
+) => {
   const transaction = await prisma.transaction.create({
     data: {
       matricNo: matricNo,
@@ -24,6 +29,7 @@ exports.createWalletTransaction = async (matricNo, cafeId, amount) => {
     data: {
       transactionId: transaction.id,
       amount: amount,
+      fundType: fundType,
     },
   });
   await prisma.claim.create({

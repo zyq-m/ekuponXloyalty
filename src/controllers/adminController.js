@@ -157,6 +157,8 @@ exports.suspendUser = async (req, res) => {
 
 exports.getReport = (pdf, all) => async (req, res) => {
   const { from, to } = req.params;
+  const { fundType } = req.body;
+
   BigInt.prototype.toJSON = function () {
     const int = Number.parseInt(this.toString());
     return int ?? this.toString();
@@ -166,9 +168,9 @@ exports.getReport = (pdf, all) => async (req, res) => {
     let report;
 
     if (all) {
-      report = await overallCafeTransaction({ all });
+      report = await overallCafeTransaction({ all, fundType });
     } else {
-      report = await overallCafeTransaction({ from, to });
+      report = await overallCafeTransaction({ from, to, fundType });
     }
 
     if (!report.length) {
@@ -250,7 +252,9 @@ exports.claimTransaction = async (req, res) => {
   }
 };
 
-const overallCafeTransaction = async ({ from, to, all }) => {
+const overallCafeTransaction = async ({ from, to, all, fundType }) => {
+  const fund = !fundType ? "MAIDAM" : fundType;
+
   if (all) {
     return await prisma.$queryRaw`
     select c.id, p.name, c.name "cafeName", c."accountNo", c.bank, count(t.id) "totalTransaction", sum(tw.amount) "totalAmount" 
@@ -260,6 +264,7 @@ const overallCafeTransaction = async ({ from, to, all }) => {
     inner join "Cafe" c on c.id = t."cafeId" 
     inner join "Profile" p on p."userId" = c."userId" 
     where cm.claimed = false
+    and tw."fundType" = ${fund}
     group by c.name, c.id, p.name`;
   }
   const dateFrom = new Date(from);
@@ -279,6 +284,7 @@ const overallCafeTransaction = async ({ from, to, all }) => {
     inner join "Profile" p on p."userId" = c."userId" 
     where cm.claimed = false
     and t."createdAt" >= ${dateFrom} and t."createdAt" < ${dateTo}
+    and tw."fundType" = ${fund}
     group by c.name, c.id, p.name`;
 };
 

@@ -1,5 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const { getRole } = require("../utils/role");
 
 exports.defineRole = (roles) => {
   return async (req, res, next) => {
@@ -22,16 +21,3 @@ exports.defineRole = (roles) => {
     next();
   };
 };
-
-// HELPER
-// find role by user id
-async function getRole(id) {
-  return await prisma.role.findUnique({
-    where: {
-      id: id,
-    },
-    select: {
-      name: true,
-    },
-  });
-}

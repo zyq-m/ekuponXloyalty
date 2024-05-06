@@ -150,6 +150,7 @@ model TWallet {
   transactionId String      @unique
   approved      Boolean     @default(false)
   amount        Decimal     @db.Money
+  fundType      String      @default("Maidam")
 }
 
 model TPoint {
