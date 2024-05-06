@@ -177,9 +177,12 @@ exports.getReport = (pdf, all) => async (req, res) => {
 
     if (pdf) {
       res.header("Content-Security-Policy", "img-src 'self'");
-      res.render("admin/transaction", { transaction: report });
+      res.render("admin/transaction", {
+        transaction: report,
+        date: { from, to },
+      });
     } else {
-      res.status(200).send({ transaction: report });
+      res.status(200).send({ transaction: report, date: { from, to } });
     }
   } catch (error) {
     console.log(error);
