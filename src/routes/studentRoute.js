@@ -45,7 +45,12 @@ router.get(
 
 // Pay
 // Students only can spend RM6 per day (b40-only)
-router.post("/pay", defineRole(["B40", "MAIDAM"]), checkBalance, makePayment);
+router.post(
+  "/pay",
+  defineRole(["B40", "MAIDAM", "PAYNET"]),
+  checkBalance,
+  makePayment
+);
 // Collect point
 router.post(
   "/point/collect",

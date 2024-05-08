@@ -113,7 +113,7 @@ exports.createPointTransaction = async (matricNo, cafeId, amount, pointId) => {
 
 exports.tWalletMany = async (role, id, take) => {
   const config =
-    role === "B40" || role === "MAIDAM"
+    role !== "CAFE"
       ? {
           matricNo: id,
           claim: {
