@@ -48,11 +48,11 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/src/views"));
 
 // Restrict all routes to only 100 requests per IP address every 1o minutes
-const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 10 minutes
-  max: 100, // 100 requests per IP
-});
-app.use(limiter);
+// const limiter = rateLimit({
+//   windowMs: 10 * 60 * 1000, // 10 minutes
+//   max: 100, // 100 requests per IP
+// });
+// app.use(limiter);
 
 app.get("/", (req, res) => {
   res.send({ message: "Hello Ekupon" });
