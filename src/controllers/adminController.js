@@ -71,7 +71,61 @@ exports.getPointTransaction = async (req, res) => {
 exports.getWalletTransaction = async (req, res) => {
   const { matricNo } = req.params;
   try {
-    const data = await transactionModel.tWalletMany("B40", matricNo, undefined);
+    const summary = await prisma.tWallet.aggregate({
+      where: {
+        transaction: {
+          matricNo: matricNo,
+          claim: {
+            claimed: false,
+          },
+        },
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+
+    const transactions = await prisma.tWallet.findMany({
+      where: {
+        transaction: {
+          matricNo: matricNo,
+          claim: {
+            claimed: false,
+          },
+        },
+      },
+      include: {
+        transaction: {
+          include: {
+            cafe: {
+              select: {
+                name: true,
+              },
+            },
+            student: {
+              select: {
+                user: {
+                  select: {
+                    profile: {
+                      select: {
+                        name: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        transaction: {
+          createdOn: "desc",
+        },
+      },
+    });
+
+    const data = { data: transactions, summary };
 
     if (!data.data.length) {
       return res.status(404).send({ message: "Not found" });
@@ -79,6 +133,7 @@ exports.getWalletTransaction = async (req, res) => {
 
     return res.status(200).send(data);
   } catch (error) {
+    console.log(error);
     return res.status(500).send({ error: error });
   }
 };
@@ -148,9 +203,9 @@ exports.suspendUser = async (req, res) => {
       },
     });
 
-    return res.status(200).send({ data: user, message: "success" });
+    return res.status(200).send({ message: "Success" });
   } catch (error) {
-    return res.status(404).send({ error: "User not found" });
+    return res.status(404).send({ message: "User not found" });
   }
 };
 
