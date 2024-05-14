@@ -40,10 +40,7 @@ router.post("/user/register/admin");
 
 // Transaction
 router.get("/report/transaction", adminController.getReport(false));
-router.get(
-  "/report/transaction/pdf/:from/:to",
-  adminController.getReport(true)
-);
+router.get("/report/transaction/pdf", adminController.getReport(true));
 
 // Cafe's QR Code
 router.get("/qr", adminController.generateQR);
