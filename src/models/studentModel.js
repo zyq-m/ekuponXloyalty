@@ -4,55 +4,40 @@ const { hash } = require("../utils/bcrypt");
 const prisma = new PrismaClient();
 
 exports.save = async (options) => {
-  let b40 = options.b40;
-  const config = {
+  return await prisma.student.create({
     data: {
       matricNo: options.matricNo,
       icNo: options.icNo,
-      b40: b40,
-
       user: {
         create: {
           profile: {
             create: {
               name: options.name,
-              phoneNo: options.phoneNo,
-              address: options.address,
             },
           },
 
           password: hash(options.icNo),
           role: {
             connect: {
-              id: b40 ? 1 : 2,
+              id: options.roleName,
             },
           },
         },
       },
+
+      coupon: {
+        create: {
+          total: 0,
+        },
+      },
+
+      point: {
+        create: {
+          total: 0,
+        },
+      },
     },
-  };
-
-  if (b40) {
-    config.data.coupon = {
-      create: {
-        total: 0,
-      },
-    };
-
-    config.data.point = {
-      create: {
-        total: 0,
-      },
-    };
-  } else {
-    config.data.point = {
-      create: {
-        total: 0,
-      },
-    };
-  }
-
-  return await prisma.student.create(config);
+  });
 };
 
 exports.getStudent = async (matricNo, role) => {
@@ -224,6 +209,24 @@ exports.getPointTotal = async (matricNo) => {
       point: {
         select: {
           total: true,
+        },
+      },
+    },
+  });
+};
+
+exports.updateManyCoupon = async (amount, role, matricNo) => {
+  return await prisma.coupon.updateMany({
+    data: {
+      total: amount,
+    },
+    where: {
+      matricNo: matricNo,
+      student: {
+        user: {
+          role: {
+            name: role,
+          },
         },
       },
     },

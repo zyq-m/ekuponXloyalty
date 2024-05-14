@@ -111,7 +111,8 @@ exports.createPointTransaction = async (matricNo, cafeId, amount, pointId) => {
   return point;
 };
 
-exports.tWalletMany = async (role, id, take) => {
+exports.tWalletMany = async (role, id, take, fundType) => {
+  const fund = !fundType ? "MAIDAM" : fundType;
   const config =
     role !== "CAFE"
       ? {
@@ -130,6 +131,7 @@ exports.tWalletMany = async (role, id, take) => {
   const summary = await prisma.tWallet.aggregate({
     where: {
       transaction: config,
+      fundType: fund,
     },
     _sum: {
       amount: true,
@@ -139,6 +141,7 @@ exports.tWalletMany = async (role, id, take) => {
   const transactions = await prisma.tWallet.findMany({
     where: {
       transaction: config,
+      fundType: fund,
     },
     include: {
       transaction: {
@@ -146,6 +149,19 @@ exports.tWalletMany = async (role, id, take) => {
           cafe: {
             select: {
               name: true,
+            },
+          },
+          student: {
+            select: {
+              user: {
+                select: {
+                  profile: {
+                    select: {
+                      name: true,
+                    },
+                  },
+                },
+              },
             },
           },
         },

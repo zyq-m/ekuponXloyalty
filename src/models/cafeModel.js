@@ -67,6 +67,11 @@ exports.getCafe = async (cafeId) => {
       user: {
         select: {
           active: true,
+          profile: {
+            select: {
+              name: true,
+            },
+          },
         },
       },
     },

@@ -59,13 +59,12 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", auth);
-app.use(authenticateToken); // Every incomming request it will validate token
-app.use("/student", student);
-app.use("/cafe", defineRole(["CAFE"]), cafe);
-app.use("/admin", admin);
-app.use("/feedback", feedback);
-app.use("/point", point);
-app.use("/limit", defineRole(["ADMIN"]), limitSpend);
+app.use("/student", authenticateToken, student);
+app.use("/cafe", authenticateToken, defineRole(["CAFE"]), cafe);
+app.use("/admin", authenticateToken, admin);
+app.use("/feedback", authenticateToken, feedback);
+app.use("/point", authenticateToken, point);
+app.use("/limit", authenticateToken, limitSpend);
 
 // Socket io
 const onConnection = (socket) => {

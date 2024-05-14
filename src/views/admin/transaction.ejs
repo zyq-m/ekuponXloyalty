@@ -52,7 +52,7 @@
       <img
         src="http://localhost:3000/public/assets/logo_left.png"
         alt="UniSZA" />
-      <h1>eKupon@UniSZA Transactions (<%=date.from %> - <%=date.to %>)</h1>
+      <h1>eKupon@UniSZA Transactions (<%=date?.from %> - <%=date?.to %>)</h1>
       <table id="tf">
         <thead>
           <tr>
@@ -111,7 +111,7 @@
           0
         );
         doc.setFontSize(14);
-        doc.text("eKupon@UniSZA Transactions (2023-06-11-2023-07-01)", 14, 46);
+        doc.text("eKupon@UniSZA Transactions (<%=date?.from %> - <%=date?.to %>)", 14, 46);
         doc.autoTable({
           html: "#tf",
           startY: 56,

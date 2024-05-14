@@ -29,31 +29,22 @@ exports.registerCafe = async (req, res) => {
   }
 };
 
-exports.getStudent = (role) => {
-  return async (req, res) => {
-    let student;
+exports.getStudent = async (req, res) => {
+  const { fundType } = req.query;
+  const fund = !fundType ? "MAIDAM" : fundType;
 
-    try {
-      if (role === "B40") {
-        student = await studentModel.getStudent(null, "B40");
-      }
-      if (role === "PAYNET") {
-        student = await studentModel.getStudent(null, "PAYNET");
-      }
-      if (role === "MAIDAM") {
-        student = await studentModel.getStudent(null, "MAIDAM");
-      }
+  try {
+    const student = await studentModel.getStudent(null, fund);
 
-      if (!student?.length) {
-        return res.status(404).send({ message: "Not found" });
-      }
-
-      return res.status(200).send({ data: student });
-    } catch (error) {
-      console.log(error);
-      return res.status(500).send({ message: error.message });
+    if (!student?.length) {
+      return res.status(404).send({ message: "Not found" });
     }
-  };
+
+    return res.status(200).send({ student });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({ message: error.message });
+  }
 };
 
 exports.getCafe = async (req, res) => {
@@ -63,7 +54,7 @@ exports.getCafe = async (req, res) => {
     return res.status(404).send({ message: "Not found" });
   }
 
-  return res.status(200).send({ data: cafe });
+  return res.status(200).send({ cafe });
 };
 
 exports.getPointTransaction = async (req, res) => {
@@ -94,13 +85,21 @@ exports.getWalletTransaction = async (req, res) => {
 
 exports.getTransactionCafe = async (req, res) => {
   const { cafeId } = req.params;
-  const data = await transactionModel.tWalletMany("CAFE", cafeId, undefined);
+  const { fundType } = req.query;
 
-  if (!data.data.length) {
+  console.log(fundType);
+  const transaction = await transactionModel.tWalletMany(
+    "CAFE",
+    cafeId,
+    undefined,
+    fundType
+  );
+
+  if (!transaction.data.length) {
     return res.status(404).send({ message: "Not found" });
   }
 
-  return res.status(200).send(data);
+  return res.status(200).send(transaction);
 };
 
 exports.updateWallet = async (req, res) => {
@@ -155,9 +154,8 @@ exports.suspendUser = async (req, res) => {
   }
 };
 
-exports.getReport = (pdf, all) => async (req, res) => {
-  const { from, to } = req.params;
-  const { fundType } = req.body;
+exports.getReport = (pdf) => async (req, res) => {
+  const { fundType, from, to } = req.query;
 
   BigInt.prototype.toJSON = function () {
     const int = Number.parseInt(this.toString());
@@ -165,13 +163,12 @@ exports.getReport = (pdf, all) => async (req, res) => {
   };
 
   try {
-    let report;
-
-    if (all) {
-      report = await overallCafeTransaction({ all, fundType });
-    } else {
-      report = await overallCafeTransaction({ from, to, fundType });
-    }
+    const report = await overallCafeTransaction({
+      all: !from ? true : false,
+      fundType,
+      from,
+      to,
+    });
 
     if (!report.length) {
       return res.status(404).send({ message: "Transaction not found" });
@@ -267,6 +264,7 @@ const overallCafeTransaction = async ({ from, to, all, fundType }) => {
     and tw."fundType" = ${fund}
     group by c.name, c.id, p.name`;
   }
+
   const dateFrom = new Date(from);
   const dateTo = new Date(to);
 
@@ -306,5 +304,17 @@ exports.generateQR = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
+  }
+};
+
+exports.updateCoupon = async (req, res) => {
+  const { amount, role, matricNo } = req.body;
+  try {
+    await studentModel.updateManyCoupon(amount, role, matricNo);
+
+    return res.status(200).send({ message: "Top up successful" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({ message: "Error" });
   }
 };
