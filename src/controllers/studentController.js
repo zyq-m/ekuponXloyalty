@@ -159,6 +159,11 @@ exports.getCafe = async function (req, res) {
         id: true,
         name: true,
       },
+      where: {
+        user: {
+          active: true,
+        },
+      },
     });
 
     if (!cafe.length) {
