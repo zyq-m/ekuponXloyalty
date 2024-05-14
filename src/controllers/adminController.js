@@ -314,9 +314,11 @@ const overallCafeTransaction = async ({ from, to, all, fundType }) => {
     inner join "Transaction" t on t.id = tw."transactionId" 
     inner join "Claim" cm on tw."transactionId" = cm."transactionId" 
     inner join "Cafe" c on c.id = t."cafeId" 
+    inner join "User" u on c."userId" = u.id
     inner join "Profile" p on p."userId" = c."userId" 
     where cm.claimed = false
     and tw."fundType" = ${fund}
+    and u.active = true
     group by c.name, c.id, p.name`;
   }
 
@@ -333,11 +335,13 @@ const overallCafeTransaction = async ({ from, to, all, fundType }) => {
     from "TWallet" tw 
     inner join "Transaction" t on t.id = tw."transactionId" 
     inner join "Claim" cm on tw."transactionId" = cm."transactionId" 
-    inner join "Cafe" c on c.id = t."cafeId" 
+    inner join "Cafe" c on c.id = t."cafeId"
+    inner join "User" u on c."userId" = u.id
     inner join "Profile" p on p."userId" = c."userId" 
     where cm.claimed = false
     and t."createdAt" >= ${dateFrom} and t."createdAt" < ${dateTo}
     and tw."fundType" = ${fund}
+    and u.active = true
     group by c.name, c.id, p.name`;
 };
 
