@@ -58,6 +58,7 @@ app.get("/", (req, res) => {
   res.send({ message: "Hello Ekupon" });
 });
 
+app.use("/public", express.static("public"));
 app.use("/auth", auth);
 app.use("/student", authenticateToken, student);
 app.use("/cafe", authenticateToken, defineRole(["CAFE"]), cafe);

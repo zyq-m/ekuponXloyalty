@@ -6,6 +6,7 @@ const cafeModel = require("../models/cafeModel");
 const transactionModel = require("../models/transactionModel");
 const { createQR } = require("../utils/qrGenerator");
 const { generateUrl } = require("../utils/generateURL");
+const dayjs = require("dayjs");
 
 const prisma = new PrismaClient();
 
@@ -225,18 +226,15 @@ exports.getReport = (pdf) => async (req, res) => {
       to,
     });
 
-    if (!report.length) {
+    if (!report.transaction.length) {
       return res.status(404).send({ message: "Transaction not found" });
     }
 
     if (pdf) {
       res.header("Content-Security-Policy", "img-src 'self'");
-      res.render("admin/transaction", {
-        transaction: report,
-        date: { from, to },
-      });
+      res.render("admin/transaction", report);
     } else {
-      res.status(200).send({ transaction: report, date: { from, to } });
+      res.status(200).send(report);
     }
   } catch (error) {
     console.log(error);
@@ -308,7 +306,20 @@ const overallCafeTransaction = async ({ from, to, all, fundType }) => {
   const fund = !fundType ? "MAIDAM" : fundType;
 
   if (all) {
-    return await prisma.$queryRaw`
+    const total = prisma.$queryRaw`
+    select count(t.id) "totalTransaction", sum(tw.amount) "totalAmount" 
+    from "TWallet" tw 
+    inner join "Transaction" t on t.id = tw."transactionId" 
+    inner join "Claim" cm on tw."transactionId" = cm."transactionId" 
+    inner join "Cafe" c on c.id = t."cafeId" 
+    inner join "User" u on c."userId" = u.id
+    inner join "Profile" p on p."userId" = c."userId" 
+    where cm.claimed = false
+    and tw."fundType" = ${fund}
+    and u.active = true
+    `;
+
+    const transaction = prisma.$queryRaw`
     select c.id, p.name, c.name "cafeName", c."accountNo", c.bank, count(t.id) "totalTransaction", sum(tw.amount) "totalAmount" 
     from "TWallet" tw 
     inner join "Transaction" t on t.id = tw."transactionId" 
@@ -320,6 +331,14 @@ const overallCafeTransaction = async ({ from, to, all, fundType }) => {
     and tw."fundType" = ${fund}
     and u.active = true
     group by c.name, c.id, p.name`;
+
+    const result = await Promise.allSettled([total, transaction]);
+
+    return {
+      transaction: result[1].value,
+      total: result[0].value[0],
+      fundType: fund,
+    };
   }
 
   const dateFrom = new Date(from);
@@ -330,7 +349,21 @@ const overallCafeTransaction = async ({ from, to, all, fundType }) => {
   // set date late 1 day
   dateTo.setDate(dateTo.getDate() + 1);
 
-  return await prisma.$queryRaw`
+  const total = prisma.$queryRaw`
+    select count(t.id) "totalTransaction", sum(tw.amount) "totalAmount" 
+    from "TWallet" tw 
+    inner join "Transaction" t on t.id = tw."transactionId" 
+    inner join "Claim" cm on tw."transactionId" = cm."transactionId" 
+    inner join "Cafe" c on c.id = t."cafeId" 
+    inner join "User" u on c."userId" = u.id
+    inner join "Profile" p on p."userId" = c."userId" 
+    where cm.claimed = false
+    and t."createdAt" >= ${dateFrom} and t."createdAt" < ${dateTo}
+    and tw."fundType" = ${fund}
+    and u.active = true
+    `;
+
+  const transaction = prisma.$queryRaw`
     select c.id, p.name, c.name "cafeName", c."accountNo", c.bank, count(t.id) "totalTransaction", sum(tw.amount) "totalAmount" 
     from "TWallet" tw 
     inner join "Transaction" t on t.id = tw."transactionId" 
@@ -343,6 +376,19 @@ const overallCafeTransaction = async ({ from, to, all, fundType }) => {
     and tw."fundType" = ${fund}
     and u.active = true
     group by c.name, c.id, p.name`;
+
+  const result = await Promise.allSettled([total, transaction]);
+
+  function formatDate(date) {
+    return dayjs(date).format("DD/MM/YYYY");
+  }
+
+  return {
+    transaction: result[1].value,
+    total: result[0].value[0],
+    date: { from: formatDate(from), to: formatDate(to) },
+    fundType: fund,
+  };
 };
 
 exports.generateQR = async (req, res) => {
