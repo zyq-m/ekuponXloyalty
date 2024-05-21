@@ -320,7 +320,7 @@ const overallCafeTransaction = async ({ from, to, all, fundType }) => {
     `;
 
     const transaction = prisma.$queryRaw`
-    select c.id, p.name, c.name "cafeName", c."accountNo", c.bank, count(t.id) "totalTransaction", sum(tw.amount) "totalAmount" 
+    select c.id, p.name, c.name "cafeName", c.premise, p."phoneNo", c."accountNo", c.bank, count(t.id) "totalTransaction", sum(tw.amount) "totalAmount" 
     from "TWallet" tw 
     inner join "Transaction" t on t.id = tw."transactionId" 
     inner join "Claim" cm on tw."transactionId" = cm."transactionId" 
@@ -330,7 +330,7 @@ const overallCafeTransaction = async ({ from, to, all, fundType }) => {
     where cm.claimed = false
     and tw."fundType" = ${fund}
     and u.active = true
-    group by c.name, c.id, p.name`;
+    group by c.name, c.id, p.name,c.premise, p."phoneNo"`;
 
     const result = await Promise.allSettled([total, transaction]);
 
@@ -364,7 +364,7 @@ const overallCafeTransaction = async ({ from, to, all, fundType }) => {
     `;
 
   const transaction = prisma.$queryRaw`
-    select c.id, p.name, c.name "cafeName", c."accountNo", c.bank, count(t.id) "totalTransaction", sum(tw.amount) "totalAmount" 
+    select c.id, p.name, c.name "cafeName", c.premise, p."phoneNo", c."accountNo", c.bank, count(t.id) "totalTransaction", sum(tw.amount) "totalAmount" 
     from "TWallet" tw 
     inner join "Transaction" t on t.id = tw."transactionId" 
     inner join "Claim" cm on tw."transactionId" = cm."transactionId" 
@@ -375,7 +375,7 @@ const overallCafeTransaction = async ({ from, to, all, fundType }) => {
     and t."createdAt" >= ${dateFrom} and t."createdAt" < ${dateTo}
     and tw."fundType" = ${fund}
     and u.active = true
-    group by c.name, c.id, p.name`;
+    group by c.name, c.id, p.name, c.premise, p."phoneNo"`;
 
   const result = await Promise.allSettled([total, transaction]);
 
