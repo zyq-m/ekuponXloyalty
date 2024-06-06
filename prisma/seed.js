@@ -5,7 +5,12 @@ const cafeModel = require("../src/models/cafeModel");
 const prisma = new PrismaClient();
 
 async function main() {
-  const init = await initPoint();
+  const init = await prisma.student.findMany({
+    include: {
+      user: true,
+      coupon: true,
+    },
+  });
 
   console.log(init);
 }
@@ -74,21 +79,31 @@ async function initRole() {
   await prisma.role.createMany({
     data: [
       {
+        id: 1,
         name: "B40",
       },
       {
+        id: 2,
         name: "PAYNET",
       },
       {
+        id: 3,
         name: "ADMIN",
       },
       {
+        id: 4,
         name: "CAFE",
       },
       {
+        id: 5,
         name: "MAIDAM",
       },
+      {
+        id: 6,
+        name: "TILAWAH",
+      },
     ],
+    skipDuplicates: true,
   });
 }
 
@@ -131,4 +146,39 @@ async function initAdmin() {
       roleId: 3,
     },
   });
+}
+
+async function addManyStudent(dt) {
+  const user_arr = dt.map((d) => ({
+    password: bcrypt.hash(d.ic_no),
+    roleId: 6,
+  }));
+  const users = await prisma.user.createManyAndReturn({
+    data: user_arr,
+    skipDuplicates: true,
+  });
+
+  const student_arr = dt.map((d, i) => ({
+    icNo: d.ic_no,
+    matricNo: d.matric_no,
+    userId: users[i].id,
+  }));
+  const student = await prisma.student.createManyAndReturn({
+    data: student_arr,
+    skipDuplicates: true,
+  });
+
+  const profile_arr = dt.map((d, i) => ({ userId: users[i].id, name: d.name }));
+  const profile = await prisma.profile.createManyAndReturn({
+    data: profile_arr,
+    skipDuplicates: true,
+  });
+
+  const coupon_arr = dt.map((d) => ({ matricNo: d.matric_no, total: 119 }));
+  const coupon = await prisma.coupon.createManyAndReturn({
+    data: coupon_arr,
+    skipDuplicates: true,
+  });
+
+  return { users, student, profile, coupon };
 }
