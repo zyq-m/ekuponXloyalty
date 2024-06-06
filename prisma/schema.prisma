@@ -75,10 +75,11 @@ model Cafe {
 }
 
 model Coupon {
-  id       String  @id @default(cuid())
-  student  Student @relation(fields: [matricNo], references: [matricNo])
-  matricNo String  @unique @db.VarChar(6)
-  total    Decimal @default(0.00) @db.Money
+  id       String    @id @default(cuid())
+  student  Student   @relation(fields: [matricNo], references: [matricNo])
+  matricNo String    @unique @db.VarChar(6)
+  total    Decimal   @default(0.00) @db.Money
+  expiry   DateTime? @db.Date
 }
 
 model Point {
