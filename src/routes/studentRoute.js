@@ -14,32 +14,34 @@ const {
 const { checkBalance } = require("../middlewares/checkBalance");
 const { verifyPoint } = require("../middlewares/collectPoint");
 const { defineRole } = require("../middlewares/role");
+const { checkExpiry } = require("../middlewares/checkExpiry");
 
 const router = express.Router();
+const authenticatedRoles = ["B40", "MAIDAM", "PAYNET", "TILAWAH"];
 
 // Get student by matric no
-router.get("/cafe", defineRole(["B40", "MAIDAM", "PAYNET"]), getCafe);
-router.get("/:matricNo", defineRole(["B40", "MAIDAM", "PAYNET"]), getStudent);
+router.get("/cafe", defineRole(authenticatedRoles), getCafe);
+router.get("/:matricNo", defineRole(authenticatedRoles), getStudent);
 
 router.get(
   "/transaction/wallet/:matricNo",
-  defineRole(["B40", "MAIDAM", "PAYNET"]),
+  defineRole(authenticatedRoles),
   getTransaction(true)
 );
 router.get(
   "/transaction/point/:matricNo",
-  defineRole(["B40", "MAIDAM", "PAYNET"]),
+  defineRole(authenticatedRoles),
   getTransaction(false)
 );
 
 router.get(
   "/transaction/wallet/:from/:to/:matricNo",
-  defineRole(["B40", "MAIDAM", "PAYNET"]),
+  defineRole(authenticatedRoles),
   getTransactionRange(true)
 );
 router.get(
   "/transaction/point/:from/:to/:matricNo",
-  defineRole(["B40", "MAIDAM", "PAYNET"]),
+  defineRole(authenticatedRoles),
   getTransactionRange(false)
 );
 
@@ -47,14 +49,15 @@ router.get(
 // Students only can spend RM6 per day (b40-only)
 router.post(
   "/pay",
-  defineRole(["B40", "MAIDAM", "PAYNET"]),
+  defineRole(authenticatedRoles),
+  checkExpiry,
   checkBalance,
   makePayment
 );
 // Collect point
 router.post(
   "/point/collect",
-  defineRole(["B40", "MAIDAM", "PAYNET"]),
+  defineRole(authenticatedRoles),
   verifyPoint,
   collectPoint
 );
