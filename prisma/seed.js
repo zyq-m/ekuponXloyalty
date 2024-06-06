@@ -182,3 +182,20 @@ async function addManyStudent(dt) {
 
   return { users, student, profile, coupon };
 }
+
+async function set_expiry(date, role) {
+  return await prisma.coupon.updateMany({
+    data: {
+      expiry: new Date(date),
+    },
+    where: {
+      student: {
+        user: {
+          role: {
+            name: role,
+          },
+        },
+      },
+    },
+  });
+}
