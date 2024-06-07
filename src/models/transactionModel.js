@@ -352,3 +352,62 @@ exports.tPointManyByDate = async (id, from, to) => {
 
   return { data: transactions, summary: summary };
 };
+
+exports.studentTWalletMany = async (id, take) => {
+  const summary = await prisma.tWallet.aggregate({
+    where: {
+      transaction: {
+        matricNo: id,
+        claim: {
+          claimed: false,
+        },
+      },
+    },
+    _sum: {
+      amount: true,
+    },
+  });
+
+  const transactions = await prisma.tWallet.findMany({
+    where: {
+      transaction: {
+        matricNo: id,
+        claim: {
+          claimed: false,
+        },
+      },
+    },
+    include: {
+      transaction: {
+        include: {
+          cafe: {
+            select: {
+              name: true,
+            },
+          },
+          student: {
+            select: {
+              user: {
+                select: {
+                  profile: {
+                    select: {
+                      name: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    take: take,
+    orderBy: {
+      transaction: {
+        createdOn: "desc",
+      },
+    },
+  });
+
+  return { data: transactions, summary: summary };
+};

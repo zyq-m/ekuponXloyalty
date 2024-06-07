@@ -189,11 +189,6 @@ exports.getWalletTotal = async (matricNo) => {
           total: true,
         },
       },
-      point: {
-        select: {
-          total: true,
-        },
-      },
     },
   });
 };

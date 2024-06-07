@@ -1,15 +1,18 @@
 const { getWalletTotal, getPointTotal } = require("../../models/studentModel");
-const { tWalletMany, tPointMany } = require("../../models/transactionModel");
+const {
+  studentTWalletMany,
+  tPointMany,
+} = require("../../models/transactionModel");
 
 module.exports = (io, socket) => {
   // Get b40 student's wallet amount & transaction
   socket.on("student:get-wallet-total", async (payload) => {
-    const { matricNo, role } = payload;
+    const { matricNo } = payload;
 
     try {
       const [walletTotal, latestTransactions] = await Promise.allSettled([
         getWalletTotal(matricNo),
-        tWalletMany(role, matricNo, 3),
+        studentTWalletMany(matricNo, 3),
       ]);
 
       if (!walletTotal) {
